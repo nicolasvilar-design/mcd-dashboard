@@ -1,245 +1,88 @@
 import React, { useState } from 'react';
 
-const RadioButton = ({
-  label,
-  name,
-  value,
-  checked = false,
-  disabled = false,
-  isDarkMode = false,
-  onChange,
-}) => {
-  const modes = {
-    light: {
-      uncheckedBorder: '#ADADAD',
-      uncheckedBackground: '#FFFFFF',
-      checkedBorder: '#006BAE',
-      checkedBackground: '#006BAE',
-      focusRing: '#0F62FE',
-      disabledBackground: '#D6D6D6',
-      disabledBorder: '#ADADAD',
-      disabledText: '#ADADAD',
-      text: '#292929',
-    },
-    dark: {
-      uncheckedBorder: '#757575',
-      uncheckedBackground: '#2A2A2A',
-      checkedBorder: '#56AFD1',
-      checkedBackground: '#56AFD1',
-      focusRing: '#56AFD1',
-      disabledBackground: '#4B4B4B',
-      disabledBorder: '#757575',
-      disabledText: '#757575',
-      text: '#FFFFFF',
-    },
-  };
+/**
+ * Radio Button — pixel-perfect from Figma (node 5644:4541)
+ * Selected = GOLD #ffbc0d circle + #292929 checkmark, BOLD label (not a blue dot).
+ * Modes: Filled (bordered container) / Unfilled. States: default, disabled, focus.
+ * Disabled selected = #ffe49e. Focus = 2px #0f62fe ring.
+ */
 
-  const mode = isDarkMode ? 'dark' : 'light';
-  const colors = modes[mode];
+const FONT = 'Speedee, system-ui, sans-serif';
 
-  const radioStyles = {
-    width: '20px',
-    height: '20px',
-    borderRadius: '50%',
-    border: `2px solid ${disabled ? colors.disabledBorder : (checked ? colors.checkedBorder : colors.uncheckedBorder)}`,
-    backgroundColor: checked ? colors.checkedBackground : (disabled ? colors.disabledBackground : colors.uncheckedBackground),
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    flexShrink: 0,
-    position: 'relative',
-  };
+const Check = () => React.createElement('svg', { width: 14, height: 14, viewBox: '0 0 24 24', fill: 'none' },
+  React.createElement('path', { d: 'M5 12l5 5L19 7', stroke: '#292929', strokeWidth: 2.6, strokeLinecap: 'round', strokeLinejoin: 'round' }));
 
-  return React.createElement(
-    'label',
-    {
-      style: {
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '8px',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.6 : 1,
-      },
-    },
-    React.createElement(
-      'input',
-      {
-        type: 'radio',
-        name,
-        value,
-        checked,
-        disabled,
-        onChange: (e) => onChange?.(e.target.value),
-        style: { display: 'none' },
-      }
-    ),
-    React.createElement(
-      'div',
-      { style: radioStyles },
-      checked && React.createElement('div', {
-        style: {
-          width: '8px',
-          height: '8px',
-          borderRadius: '50%',
-          backgroundColor: '#FFFFFF',
-          position: 'absolute',
-        },
-      })
-    ),
-    label && React.createElement('span', {
-      style: {
-        fontSize: '14px',
-        fontFamily: 'Segoe UI, system-ui, sans-serif',
-        color: disabled ? colors.disabledText : colors.text,
-        fontWeight: '500',
-      },
-    }, label)
+const Radio = ({ label = 'Radiobutton label', selected = false, state = 'default', fill = 'unfilled', name, value, onSelect }) => {
+  const disabled = state === 'disabled';
+  const focused = state === 'focus';
+
+  let bg = '#ffffff', border = '2px solid #292929';
+  if (disabled) { bg = selected ? '#ffe49e' : '#ffffff'; border = '2px solid #adadad'; }
+  else if (selected) { bg = '#ffbc0d'; border = '2px solid #ffbc0d'; }
+  if (focused) border = '2px solid #0f62fe';
+
+  const circle = React.createElement('span', {
+    style: { width: '20px', height: '20px', borderRadius: '50%', backgroundColor: bg, border, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', flexShrink: 0 },
+  }, selected && !disabled && React.createElement(Check));
+
+  const row = React.createElement('label', {
+    onClick: () => !disabled && onSelect && onSelect(value),
+    style: { display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: disabled ? 'not-allowed' : 'pointer' },
+  },
+    circle,
+    React.createElement('span', { style: { fontFamily: FONT, fontSize: '14px', letterSpacing: '-0.15px', color: disabled ? '#adadad' : '#292929', fontWeight: selected ? 700 : 400 } }, label)
   );
+
+  if (fill === 'filled') {
+    return React.createElement('div', {
+      style: { border: `1px solid ${focused ? '#0f62fe' : '#d6d6d6'}`, borderRadius: '8px', padding: '12px 16px', display: 'inline-flex' },
+    }, row);
+  }
+  return row;
 };
 
 export default {
   title: 'Components/Radio Button',
-  component: RadioButton,
-  parameters: {
-    layout: 'centered',
-  },
+  component: Radio,
+  parameters: { layout: 'centered' },
   tags: ['autodocs'],
   argTypes: {
-    checked: {
-      control: 'boolean',
-    },
-    disabled: {
-      control: 'boolean',
-    },
-    isDarkMode: {
-      control: 'boolean',
-    },
-    label: {
-      control: 'text',
-    },
+    selected: { control: 'boolean' },
+    state: { control: 'select', options: ['default', 'disabled', 'focus'] },
+    fill: { control: 'select', options: ['unfilled', 'filled'] },
+    label: { control: 'text' },
   },
 };
 
-export const Unselected = {
-  args: {
-    label: 'Unselected Radio Button',
-    name: 'option',
-    value: 'option1',
-    checked: false,
-  },
-};
-
-export const Selected = {
-  args: {
-    label: 'Selected Radio Button',
-    name: 'option',
-    value: 'option1',
-    checked: true,
-  },
-};
-
-export const Disabled = {
-  args: {
-    label: 'Disabled Radio Button',
-    name: 'option',
-    value: 'option1',
-    disabled: true,
-  },
-};
-
-export const DisabledSelected = {
-  args: {
-    label: 'Disabled & Selected',
-    name: 'option',
-    value: 'option1',
-    checked: true,
-    disabled: true,
-  },
-};
-
-export const DarkMode = {
-  args: {
-    label: 'Dark Mode Radio',
-    name: 'option',
-    value: 'option1',
-    isDarkMode: true,
-  },
-  parameters: {
-    backgrounds: { default: 'dark' },
-  },
-};
+export const Unselected = { args: { selected: false } };
+export const Selected = { args: { selected: true } };
+export const Filled = { args: { selected: true, fill: 'filled' } };
 
 export const RadioGroup = {
   render: () => {
-    const [selected, setSelected] = useState('option1');
-
-    return React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui' } },
-      React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '20px', fontWeight: 'bold' } }, 'Select an Option'),
-      React.createElement(
-        'div',
-        { style: { display: 'flex', flexDirection: 'column', gap: '16px' } },
-        React.createElement(RadioButton, {
-          label: 'Option 1',
-          name: 'group',
-          value: 'option1',
-          checked: selected === 'option1',
-          onChange: setSelected,
-        }),
-        React.createElement(RadioButton, {
-          label: 'Option 2',
-          name: 'group',
-          value: 'option2',
-          checked: selected === 'option2',
-          onChange: setSelected,
-        }),
-        React.createElement(RadioButton, {
-          label: 'Option 3',
-          name: 'group',
-          value: 'option3',
-          checked: selected === 'option3',
-          onChange: setSelected,
-        }),
-      ),
-      React.createElement('p', { style: { marginTop: '24px', color: '#757575' } }, `Selected: ${selected}`)
+    const [sel, setSel] = useState('1');
+    return React.createElement('div', { style: { padding: '40px', display: 'flex', flexDirection: 'column', gap: '16px' } },
+      ...['1', '2', '3'].map((v) => React.createElement(Radio, { key: v, label: `Option ${v}`, value: v, selected: sel === v, onSelect: setSel }))
     );
   },
 };
 
 export const AllStates = {
   render: () => {
-    return React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', gap: '48px' } },
-      React.createElement(
-        'div',
-        null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Light Mode States'),
-        React.createElement(
-          'div',
-          { style: { display: 'flex', flexDirection: 'column', gap: '16px' } },
-          React.createElement(RadioButton, { label: 'Unselected', name: 'light', value: '1' }),
-          React.createElement(RadioButton, { label: 'Selected', name: 'light', value: '2', checked: true }),
-          React.createElement(RadioButton, { label: 'Disabled', name: 'light', value: '3', disabled: true }),
-          React.createElement(RadioButton, { label: 'Disabled Selected', name: 'light', value: '4', checked: true, disabled: true }),
-        ),
-      ),
-      React.createElement(
-        'div',
-        { style: { backgroundColor: '#1A1A1A', padding: '32px', borderRadius: '8px' } },
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' } }, 'Dark Mode States'),
-        React.createElement(
-          'div',
-          { style: { display: 'flex', flexDirection: 'column', gap: '16px' } },
-          React.createElement(RadioButton, { label: 'Unselected', name: 'dark', value: '1', isDarkMode: true }),
-          React.createElement(RadioButton, { label: 'Selected', name: 'dark', value: '2', checked: true, isDarkMode: true }),
-          React.createElement(RadioButton, { label: 'Disabled', name: 'dark', value: '3', disabled: true, isDarkMode: true }),
-          React.createElement(RadioButton, { label: 'Disabled Selected', name: 'dark', value: '4', checked: true, disabled: true, isDarkMode: true }),
-        ),
-      ),
+    const Col = (fill, title) => React.createElement('div', null,
+      React.createElement('h4', { style: { fontSize: '13px', color: '#6f6f6f', margin: '0 0 12px 0' } }, title),
+      React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px' } },
+        React.createElement(Radio, { fill, selected: false, state: 'default' }),
+        React.createElement(Radio, { fill, selected: false, state: 'disabled' }),
+        React.createElement(Radio, { fill, selected: false, state: 'focus' }),
+        React.createElement(Radio, { fill, selected: true, state: 'default' }),
+        React.createElement(Radio, { fill, selected: true, state: 'disabled' }),
+        React.createElement(Radio, { fill, selected: true, state: 'focus' })
+      )
+    );
+    return React.createElement('div', { style: { padding: '40px', fontFamily: FONT, display: 'flex', gap: '64px' } },
+      Col('filled', 'Filled'),
+      Col('unfilled', 'Unfilled')
     );
   },
 };
