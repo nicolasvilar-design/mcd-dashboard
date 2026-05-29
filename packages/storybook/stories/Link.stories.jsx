@@ -1,49 +1,41 @@
 import React, { useState } from 'react';
 
-const Link = ({
-  label = 'Link',
-  href = '#',
-  disabled = false,
-  isDarkMode = false,
-  external = false,
-  underline = 'hover',
-  onClick,
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
+/**
+ * Link — pixel-perfect from Figma (node 847:3503)
+ * Figma's Link component is a back-navigation link: ← Label, #292929 text + arrow.
+ * Also supports an inline text link using link-primary (#0f62fe).
+ * Variants: back (default, with arrow) · inline · external. States: enabled/hover/disabled.
+ */
 
-  const colors = isDarkMode ? '#56AFD1' : '#0F62FE';
-  const hoverColor = isDarkMode ? '#8AC6D1' : '#054ADA';
-  const disabledColor = isDarkMode ? '#757575' : '#ADADAD';
+const FONT = 'Speedee, system-ui, sans-serif';
 
-  const getTextDecoration = () => {
-    if (disabled) return 'none';
-    if (underline === 'always') return 'underline';
-    if (underline === 'hover' && isHovered) return 'underline';
-    return 'none';
-  };
+const ArrowLeft = ({ color }) => React.createElement('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none' },
+  React.createElement('path', { d: 'M19 12H5M5 12l6-6M5 12l6 6', stroke: color, strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' }));
 
-  return React.createElement(
-    'a',
-    {
-      href: disabled ? undefined : href,
-      onClick: disabled ? (e) => e.preventDefault() : onClick,
-      target: external && !disabled ? '_blank' : undefined,
-      rel: external && !disabled ? 'noopener noreferrer' : undefined,
-      onMouseEnter: () => !disabled && setIsHovered(true),
-      onMouseLeave: () => setIsHovered(false),
-      style: {
-        color: disabled ? disabledColor : (isHovered ? hoverColor : colors),
-        textDecoration: getTextDecoration(),
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontSize: '14px',
-        fontWeight: '500',
-        transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-        opacity: disabled ? 0.6 : 1,
-      },
+const Link = ({ label = 'Label', variant = 'back', disabled = false, href = '#', onClick }) => {
+  const [hover, setHover] = useState(false);
+
+  const isInline = variant === 'inline' || variant === 'external';
+  const baseColor = isInline ? '#0f62fe' : '#292929';
+  const hoverColor = isInline ? '#054ADA' : '#000000';
+  const color = disabled ? '#adadad' : (hover ? hoverColor : baseColor);
+
+  return React.createElement('a', {
+    href: disabled ? undefined : href,
+    onClick: disabled ? (e) => e.preventDefault() : onClick,
+    target: variant === 'external' && !disabled ? '_blank' : undefined,
+    rel: variant === 'external' && !disabled ? 'noopener noreferrer' : undefined,
+    onMouseEnter: () => !disabled && setHover(true), onMouseLeave: () => setHover(false),
+    style: {
+      display: 'inline-flex', alignItems: 'center', gap: '8px', color,
+      fontFamily: FONT, fontSize: '14px', fontWeight: 700, letterSpacing: '-0.15px',
+      textDecoration: isInline && (hover || !disabled) ? (hover ? 'underline' : 'none') : 'none',
+      cursor: disabled ? 'not-allowed' : 'pointer', transition: 'color 150ms cubic-bezier(0.4,0,0.2,1)',
     },
-    label,
-    external && !disabled && React.createElement('span', { style: { marginLeft: '4px' } }, '↗')
+  },
+    variant === 'back' && React.createElement(ArrowLeft, { color }),
+    React.createElement('span', null, label),
+    variant === 'external' && !disabled && React.createElement('span', null, '↗')
   );
 };
 
@@ -53,62 +45,22 @@ export default {
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
   argTypes: {
+    variant: { control: 'select', options: ['back', 'inline', 'external'] },
     disabled: { control: 'boolean' },
-    isDarkMode: { control: 'boolean' },
-    external: { control: 'boolean' },
-    underline: { control: 'select', options: ['hover', 'always', 'never'] },
     label: { control: 'text' },
-    href: { control: 'text' },
   },
 };
 
-export const Default = {
-  args: { label: 'Click me', href: '#' },
-};
+export const Back = { args: { label: 'Label', variant: 'back' } };
+export const Inline = { args: { label: 'Inline link', variant: 'inline' } };
+export const External = { args: { label: 'External link', variant: 'external' } };
+export const Disabled = { args: { label: 'Label', variant: 'back', disabled: true } };
 
-export const External = {
-  args: { label: 'External link', href: 'https://example.com', external: true },
-};
-
-export const Disabled = {
-  args: { label: 'Disabled link', disabled: true },
-};
-
-export const AlwaysUnderlined = {
-  args: { label: 'Always underlined', underline: 'always' },
-};
-
-export const NeverUnderlined = {
-  args: { label: 'Never underlined', underline: 'never' },
-};
-
-export const DarkMode = {
-  args: { label: 'Dark mode link', isDarkMode: true },
-  parameters: { backgrounds: { default: 'dark' } },
-};
-
-export const AllStates = {
-  render: () =>
-    React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', gap: '24px' } },
-      React.createElement('div', null,
-        React.createElement('p', { style: { margin: '0 0 12px 0', fontWeight: '600' } }, 'Light Mode'),
-        React.createElement('div', { style: { display: 'flex', gap: '24px' } },
-          React.createElement(Link, { label: 'Default' }),
-          React.createElement(Link, { label: 'External', external: true }),
-          React.createElement(Link, { label: 'Disabled', disabled: true })
-        )
-      ),
-      React.createElement(
-        'div',
-        { style: { backgroundColor: '#1A1A1A', padding: '32px', borderRadius: '8px' } },
-        React.createElement('p', { style: { margin: '0 0 12px 0', fontWeight: '600', color: '#FFFFFF' } }, 'Dark Mode'),
-        React.createElement('div', { style: { display: 'flex', gap: '24px' } },
-          React.createElement(Link, { label: 'Default', isDarkMode: true }),
-          React.createElement(Link, { label: 'External', external: true, isDarkMode: true }),
-          React.createElement(Link, { label: 'Disabled', disabled: true, isDarkMode: true })
-        )
-      )
-    ),
+export const AllVariants = {
+  render: () => React.createElement('div', { style: { padding: '40px', fontFamily: FONT, display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start' } },
+    React.createElement(Link, { label: 'Label', variant: 'back' }),
+    React.createElement(Link, { label: 'Inline link', variant: 'inline' }),
+    React.createElement(Link, { label: 'External link', variant: 'external' }),
+    React.createElement(Link, { label: 'Disabled', variant: 'back', disabled: true })
+  ),
 };
