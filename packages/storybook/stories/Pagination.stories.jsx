@@ -1,171 +1,71 @@
 import React, { useState } from 'react';
 
-const Pagination = ({
-  totalPages = 10,
-  isDarkMode = false,
-  onChange,
-}) => {
-  const [currentPage, setCurrentPage] = useState(1);
+/**
+ * Pagination — pixel-perfect from Figma (node 787:27330)
+ * Pattern: "Item por página: [select ▾]   X–Y de Z   ‹ ›"
+ * (Figma's Pagination is the items-per-page footer control, not a numbered page list.)
+ */
 
-  const modes = {
-    light: {
-      background: '#FFFFFF',
-      border: '#D6D6D6',
-      text: '#292929',
-      activeBg: '#FFBC0D',
-      activeText: '#292929',
-      disabledText: '#ADADAD',
-    },
-    dark: {
-      background: '#2A2A2A',
-      border: '#4B4B4B',
-      text: '#FFFFFF',
-      activeBg: '#FFBC0D',
-      activeText: '#292929',
-      disabledText: '#757575',
-    },
-  };
+const FONT = 'Speedee, system-ui, sans-serif';
+const PER_PAGE_OPTIONS = [5, 10, 20, 30, 40, 50, 60, 100];
 
-  const mode = isDarkMode ? 'dark' : 'light';
-  const colors = modes[mode];
+const Chevron = ({ open }) => React.createElement('svg', { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', style: { transform: open ? 'rotate(180deg)' : 'none' } },
+  React.createElement('path', { d: 'M6 9l6 6 6-6', stroke: '#292929', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' }));
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    onChange?.(page);
-  };
-
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 7;
-
-    if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push('...');
-
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
-
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-
-      if (currentPage < totalPages - 2) pages.push('...');
-      pages.push(totalPages);
-    }
-    return pages;
-  };
-
-  const pageNumbers = getPageNumbers();
-
-  return React.createElement(
-    'div',
-    { style: { display: 'flex', gap: '8px', alignItems: 'center', fontFamily: 'system-ui' } },
-    React.createElement(
-      'button',
-      {
-        onClick: () => currentPage > 1 && handlePageChange(currentPage - 1),
-        disabled: currentPage === 1,
-        style: {
-          padding: '8px 12px',
-          backgroundColor: colors.background,
-          border: `1px solid ${colors.border}`,
-          borderRadius: '4px',
-          cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-          color: currentPage === 1 ? colors.disabledText : colors.text,
-          fontWeight: '600',
-        },
+const PerPageSelect = ({ value, onChange }) => {
+  const [open, setOpen] = useState(false);
+  return React.createElement('div', { style: { position: 'relative' } },
+    React.createElement('button', {
+      onClick: () => setOpen((o) => !o),
+      style: {
+        display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: open ? '#d6d6d6' : '#ffffff',
+        border: '1px solid #d6d6d6', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer',
+        fontFamily: FONT, fontSize: '14px', color: '#292929',
       },
-      '← Prev'
-    ),
-    pageNumbers.map((page, index) =>
-      page === '...'
-        ? React.createElement('span', { key: `ellipsis-${index}`, style: { color: colors.text } }, '...')
-        : React.createElement(
-            'button',
-            {
-              key: page,
-              onClick: () => handlePageChange(page),
-              style: {
-                padding: '8px 12px',
-                backgroundColor: currentPage === page ? colors.activeBg : colors.background,
-                color: currentPage === page ? colors.activeText : colors.text,
-                border: `1px solid ${colors.border}`,
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: currentPage === page ? '600' : '500',
-              },
-            },
-            page
-          )
-    ),
-    React.createElement(
-      'button',
-      {
-        onClick: () => currentPage < totalPages && handlePageChange(currentPage + 1),
-        disabled: currentPage === totalPages,
-        style: {
-          padding: '8px 12px',
-          backgroundColor: colors.background,
-          border: `1px solid ${colors.border}`,
-          borderRadius: '4px',
-          cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-          color: currentPage === totalPages ? colors.disabledText : colors.text,
-          fontWeight: '600',
-        },
-      },
-      'Next →'
+    }, value, React.createElement(Chevron, { open })),
+    open && React.createElement('div', {
+      style: { position: 'absolute', bottom: '100%', left: 0, marginBottom: '4px', backgroundColor: '#fff', border: '1px solid #d6d6d6', borderRadius: '4px', boxShadow: '0px 8px 16px rgba(41,41,41,0.16)', zIndex: 10, maxHeight: '200px', overflowY: 'auto' },
+    },
+      ...PER_PAGE_OPTIONS.map((o) => React.createElement('div', {
+        key: o, onClick: () => { onChange(o); setOpen(false); },
+        style: { padding: '8px 16px', fontFamily: FONT, fontSize: '14px', color: '#292929', cursor: 'pointer', backgroundColor: o === value ? '#f9f9f9' : '#fff', minWidth: '60px' },
+        onMouseEnter: (e) => (e.currentTarget.style.backgroundColor = '#f9f9f9'),
+        onMouseLeave: (e) => (e.currentTarget.style.backgroundColor = o === value ? '#f9f9f9' : '#fff'),
+      }, o))
     )
+  );
+};
+
+const Pagination = ({ total = 61, defaultPerPage = 50 }) => {
+  const [perPage, setPerPage] = useState(defaultPerPage);
+  const [page, setPage] = useState(1);
+  const start = (page - 1) * perPage + 1;
+  const end = Math.min(page * perPage, total);
+  const lastPage = Math.ceil(total / perPage);
+
+  const arrow = (dir, dis, onClick) => React.createElement('button', {
+    onClick: dis ? undefined : onClick, disabled: dis,
+    style: { background: 'none', border: 'none', cursor: dis ? 'not-allowed' : 'pointer', color: dis ? '#adadad' : '#292929', fontSize: '18px', padding: '4px 8px' },
+  }, dir === 'prev' ? '‹' : '›');
+
+  return React.createElement('div', {
+    style: { display: 'inline-flex', alignItems: 'center', gap: '24px', fontFamily: FONT, fontSize: '14px', color: '#292929' },
+  },
+    React.createElement('span', { style: { display: 'inline-flex', alignItems: 'center', gap: '8px' } },
+      'Item por página:', React.createElement(PerPageSelect, { value: perPage, onChange: (v) => { setPerPage(v); setPage(1); } })),
+    React.createElement('span', null, `${start}–${end} de ${total}`),
+    React.createElement('span', { style: { display: 'inline-flex', alignItems: 'center' } },
+      arrow('prev', page <= 1, () => setPage((p) => p - 1)),
+      arrow('next', page >= lastPage, () => setPage((p) => p + 1)))
   );
 };
 
 export default {
   title: 'Components/Pagination',
   component: Pagination,
-  parameters: { layout: 'centered' },
+  parameters: { layout: 'padded' },
   tags: ['autodocs'],
-  argTypes: {
-    totalPages: { control: 'number', min: 1, max: 20 },
-    isDarkMode: { control: 'boolean' },
-  },
+  argTypes: { total: { control: 'number' }, defaultPerPage: { control: 'number' } },
 };
 
-export const Default = {
-  args: { totalPages: 10 },
-};
-
-export const SmallSet = {
-  args: { totalPages: 5 },
-};
-
-export const LargeSet = {
-  args: { totalPages: 20 },
-};
-
-export const DarkMode = {
-  args: { totalPages: 10, isDarkMode: true },
-  parameters: { backgrounds: { default: 'dark' } },
-};
-
-export const AllStates = {
-  render: () =>
-    React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', gap: '48px' } },
-      React.createElement(
-        'div',
-        null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Light Mode'),
-        React.createElement(Pagination, { totalPages: 10 })
-      ),
-      React.createElement(
-        'div',
-        { style: { backgroundColor: '#1A1A1A', padding: '32px', borderRadius: '8px' } },
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' } }, 'Dark Mode'),
-        React.createElement(Pagination, { totalPages: 10, isDarkMode: true })
-      )
-    ),
-};
+export const Default = { render: () => React.createElement('div', { style: { padding: '40px' } }, React.createElement(Pagination, { total: 61, defaultPerPage: 50 })) };

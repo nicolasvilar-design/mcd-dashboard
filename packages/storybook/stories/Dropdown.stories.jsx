@@ -1,135 +1,54 @@
 import React, { useState } from 'react';
 
-const Dropdown = ({
-  label,
-  options = [],
-  disabled = false,
-  isDarkMode = false,
-  onChange,
-  placeholder = 'Select an option',
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
+/**
+ * Dropdown — pixel-perfect from Figma (node 3124:6302)
+ * Input base: underline field (bottom border) + "Menu item" + chevron.
+ * States: enabled, hovered (#d6d6d6), focused, pressed, active, disabled, error, skeleton.
+ * Opens Dropdown-ListMenu (list of "Menu option" rows).
+ */
+
+const FONT = 'Speedee, system-ui, sans-serif';
+
+const Chevron = ({ open }) => React.createElement('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', style: { transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 150ms' } },
+  React.createElement('path', { d: 'M6 9l6 6 6-6', stroke: '#292929', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' }));
+
+const Dropdown = ({ label = 'Menu item', options = [], state = 'enabled', placeholder = 'Menu item', interactive = false }) => {
+  const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(null);
+  const disabled = state === 'disabled';
+  const error = state === 'error';
+  const skeleton = state === 'skeleton';
 
-  const modes = {
-    light: {
-      background: '#FFFFFF',
-      border: '#ADADAD',
-      text: '#292929',
-      placeholder: '#ADADAD',
-      hoverBackground: '#F9F9F9',
-      menuBackground: '#FFFFFF',
-      optionHover: '#F9F9F9',
-      disabledBackground: '#D6D6D6',
-      disabledText: '#ADADAD',
-    },
-    dark: {
-      background: '#2A2A2A',
-      border: '#757575',
-      text: '#FFFFFF',
-      placeholder: '#ADADAD',
-      hoverBackground: '#333333',
-      menuBackground: '#1A1A1A',
-      optionHover: '#333333',
-      disabledBackground: '#1A1A1A',
-      disabledText: '#757575',
-    },
-  };
+  if (skeleton) return React.createElement('div', { style: { width: '240px', height: '40px', borderRadius: '4px', backgroundColor: '#d6d6d6' } });
 
-  const mode = isDarkMode ? 'dark' : 'light';
-  const colors = modes[mode];
+  let bg = 'transparent';
+  if (state === 'hovered' || state === 'focused') bg = '#d6d6d6';
 
-  const handleSelect = (option) => {
-    setSelected(option.value);
-    onChange?.(option.value);
-    setIsOpen(false);
-  };
+  const borderColor = error ? '#db0007' : '#292929';
 
-  const selectedOption = options.find((opt) => opt.value === selected);
-  const displayText = selectedOption ? selectedOption.label : placeholder;
-
-  return React.createElement(
-    'div',
-    { style: { display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', maxWidth: '300px', position: 'relative' } },
-    label && React.createElement('label', {
+  return React.createElement('div', { style: { position: 'relative', width: '240px', fontFamily: FONT } },
+    React.createElement('button', {
+      onClick: () => interactive && !disabled && setOpen((o) => !o), disabled,
       style: {
-        fontSize: '14px',
-        fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontWeight: '600',
-        color: colors.text,
+        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px',
+        padding: '8px', backgroundColor: bg, border: 'none', borderBottom: `${error || state === 'focused' ? 2 : 1}px solid ${borderColor}`,
+        cursor: disabled ? 'not-allowed' : 'pointer', fontFamily: FONT, fontSize: '14px', letterSpacing: '-0.15px',
+        color: disabled ? '#adadad' : '#292929', boxSizing: 'border-box',
       },
-    }, label),
-    React.createElement(
-      'button',
-      {
-        onClick: () => !disabled && setIsOpen(!isOpen),
-        disabled,
-        style: {
-          padding: '12px 16px',
-          backgroundColor: disabled ? colors.disabledBackground : colors.background,
-          border: `1px solid ${disabled ? colors.disabledText : colors.border}`,
-          borderRadius: '4px',
-          fontSize: '14px',
-          fontFamily: 'Segoe UI, system-ui, sans-serif',
-          color: selected ? colors.text : colors.placeholder,
-          cursor: disabled ? 'not-allowed' : 'pointer',
-          textAlign: 'left',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        },
-      },
-      React.createElement('span', null, displayText),
-      React.createElement('span', { style: { color: colors.placeholder } }, isOpen ? '▲' : '▼')
+    },
+      React.createElement('span', null, selected || label || placeholder),
+      React.createElement(Chevron, { open: open || state === 'pressed' || state === 'active' })
     ),
-    isOpen && !disabled && React.createElement(
-      'div',
-      {
-        style: {
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: 0,
-          backgroundColor: colors.menuBackground,
-          border: `1px solid ${colors.border}`,
-          borderRadius: '4px',
-          marginTop: '4px',
-          zIndex: 10,
-          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
-        },
-      },
-      options.map((option, index) =>
-        React.createElement(
-          'button',
-          {
-            key: option.value,
-            onClick: () => handleSelect(option),
-            style: {
-              width: '100%',
-              padding: '12px 16px',
-              backgroundColor: selected === option.value ? '#FFBC0D' : colors.menuBackground,
-              color: selected === option.value ? '#292929' : colors.text,
-              border: 'none',
-              textAlign: 'left',
-              cursor: 'pointer',
-              fontFamily: 'Segoe UI, system-ui, sans-serif',
-              fontSize: '14px',
-              borderBottom: index < options.length - 1 ? `1px solid ${colors.border}` : 'none',
-            },
-            onMouseEnter: (e) => {
-              if (selected !== option.value) {
-                e.target.style.backgroundColor = colors.optionHover;
-              }
-            },
-            onMouseLeave: (e) => {
-              if (selected !== option.value) {
-                e.target.style.backgroundColor = colors.menuBackground;
-              }
-            },
-          },
-          option.label
-        )
-      )
+    error && React.createElement('span', { style: { fontSize: '12px', color: '#db0007', padding: '4px 8px', display: 'block' } }, 'Supporting text'),
+    open && React.createElement('div', {
+      style: { position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '2px', backgroundColor: '#fff', border: '1px solid #d6d6d6', borderRadius: '4px', boxShadow: '0px 8px 16px rgba(41,41,41,0.16)', zIndex: 10, maxHeight: '240px', overflowY: 'auto' },
+    },
+      ...options.map((o, i) => React.createElement('div', {
+        key: i, onClick: () => { setSelected(o); setOpen(false); },
+        style: { padding: '12px 16px', fontSize: '14px', color: '#292929', cursor: 'pointer', borderBottom: i < options.length - 1 ? '1px solid #f9f9f9' : 'none', backgroundColor: selected === o ? '#f9f9f9' : '#fff' },
+        onMouseEnter: (e) => (e.currentTarget.style.backgroundColor = '#f9f9f9'),
+        onMouseLeave: (e) => (e.currentTarget.style.backgroundColor = selected === o ? '#f9f9f9' : '#fff'),
+      }, o))
     )
   );
 };
@@ -140,54 +59,26 @@ export default {
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
   argTypes: {
-    disabled: { control: 'boolean' },
-    isDarkMode: { control: 'boolean' },
+    state: { control: 'select', options: ['enabled', 'hovered', 'focused', 'pressed', 'active', 'disabled', 'error', 'skeleton'] },
     label: { control: 'text' },
   },
 };
 
-const options = [
-  { label: 'Option 1', value: 'opt1' },
-  { label: 'Option 2', value: 'opt2' },
-  { label: 'Option 3', value: 'opt3' },
-  { label: 'Option 4', value: 'opt4' },
-];
+const opts = ['Menu option', 'Menu option', 'Menu option', 'Menu option', 'Menu option'];
 
-export const Default = {
-  args: { label: 'Select Option', options },
-};
-
-export const Disabled = {
-  args: { label: 'Disabled Dropdown', options, disabled: true },
-};
-
-export const DarkMode = {
-  args: { label: 'Dark Mode', options, isDarkMode: true },
-  parameters: { backgrounds: { default: 'dark' } },
-};
+export const Default = { args: { label: 'Menu item', options: opts, interactive: true } };
+export const Error = { args: { label: 'Menu item', state: 'error', options: opts } };
+export const Disabled = { args: { label: 'Menu item', state: 'disabled', options: opts } };
 
 export const AllStates = {
-  render: () =>
-    React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', gap: '48px' } },
-      React.createElement(
-        'div',
-        null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Light Mode'),
-        React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '300px' } },
-          React.createElement(Dropdown, { label: 'Default', options }),
-          React.createElement(Dropdown, { label: 'Disabled', options, disabled: true })
-        )
-      ),
-      React.createElement(
-        'div',
-        { style: { backgroundColor: '#1A1A1A', padding: '32px', borderRadius: '8px' } },
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' } }, 'Dark Mode'),
-        React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '300px' } },
-          React.createElement(Dropdown, { label: 'Default', options, isDarkMode: true }),
-          React.createElement(Dropdown, { label: 'Disabled', options, disabled: true, isDarkMode: true })
-        )
-      )
-    ),
+  render: () => {
+    const states = ['enabled', 'hovered', 'focused', 'pressed', 'active', 'disabled', 'error', 'skeleton'];
+    return React.createElement('div', { style: { padding: '40px', fontFamily: FONT, display: 'flex', flexDirection: 'column', gap: '20px' } },
+      React.createElement('h2', { style: { margin: '0 0 8px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Dropdown — states'),
+      ...states.map((st) => React.createElement('div', { key: st, style: { display: 'flex', alignItems: 'flex-start', gap: '24px' } },
+        React.createElement('span', { style: { width: '70px', fontSize: '12px', color: '#6f6f6f', paddingTop: '10px' } }, st),
+        React.createElement(Dropdown, { label: 'Menu item', state: st, options: opts })
+      ))
+    );
+  },
 };
