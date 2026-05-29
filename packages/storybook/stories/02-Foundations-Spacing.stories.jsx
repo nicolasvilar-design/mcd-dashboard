@@ -4,6 +4,8 @@ export default {
   title: 'Foundations/Spacing',
   parameters: {
     layout: 'fullscreen',
+    docs: { description: { component:
+'Escala de espaciado base 8px. La escala canónica del DS vive en `_tokens.js` (`space`): 0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64. Los valores Figma se nombran -000/-050/100/200/300/400/500.' } },
   },
 };
 

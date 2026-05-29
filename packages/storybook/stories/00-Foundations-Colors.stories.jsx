@@ -1,75 +1,77 @@
 import React from 'react';
+import { color } from './_tokens';
+
+/**
+ * Colors — rendered from the central token source (_tokens.js).
+ * Editing a value in _tokens.js updates this doc AND every component at once.
+ */
 
 export default {
   title: 'Foundations/Colors',
   parameters: {
     layout: 'fullscreen',
+    docs: { description: { component: 'Paleta del DS, fuente única en `_tokens.js`. Los componentes consumen estos mismos tokens.' } },
   },
 };
 
-export const ColorPalette = () => {
-  const colors = [
-    // Primary Brand Colors
-    { name: 'McDonald\'s Gold', hex: '#FFBC0D', usage: 'Primary actions, brand highlight', category: 'PRIMARY' },
-    { name: 'McDonald\'s Red', hex: '#DB0007', usage: 'Delete actions, destructive operations', category: 'PRIMARY' },
-    { name: 'McDonald\'s Black', hex: '#292929', usage: 'Primary text, UI elements, titles', category: 'PRIMARY' },
-    { name: 'McDonald\'s Green', hex: '#1F6437', usage: 'Success states, positive feedback', category: 'PRIMARY' },
-    { name: 'White', hex: '#FFFFFF', usage: 'Default background, cards', category: 'PRIMARY' },
+const GROUPS = [
+  { title: 'PRIMARY / BRAND', items: [
+    ['gold', 'Acciones primarias, selección, highlight de marca'],
+    ['red', 'Acciones destructivas (delete)'],
+    ['black', 'Texto primario, UI, títulos'],
+    ['green', 'Éxito, feedback positivo'],
+    ['white', 'Fondo por defecto, cards'],
+  ]},
+  { title: 'SECONDARY', items: [
+    ['blue', 'Acciones secundarias, información'],
+    ['orange', 'Advertencias, alertas'],
+    ['darkBlue', 'Información profunda'],
+    ['lightBlue', 'Fondos de información clara'],
+    ['fuschia', 'Énfasis, highlights'],
+    ['beige', 'Acento neutro'],
+  ]},
+  { title: 'NEUTRAL', items: [
+    ['ivory', 'Fondos de página, superficies claras'],
+    ['lightGrey', 'Bordes, fondos secundarios (layer-03)'],
+    ['grey', 'Texto deshabilitado, contenido secundario'],
+    ['darkGrey', 'Texto de cuerpo, descripciones (text-secondary)'],
+  ]},
+  { title: 'TEXT', items: [
+    ['text', 'Texto primario'],
+    ['textSecondary', 'Placeholder / helper'],
+    ['textDisabled', 'Texto deshabilitado'],
+  ]},
+  { title: 'SUPPORT (SEMANTIC)', items: [
+    ['supportError', 'Errores'],
+    ['supportSuccess', 'Éxito'],
+    ['supportWarning', 'Advertencias'],
+  ]},
+  { title: 'LINKS', items: [
+    ['link', 'Link por defecto'],
+    ['linkHover', 'Link hover'],
+    ['linkVisited', 'Link visitado'],
+  ]},
+];
 
-    // Secondary Colors
-    { name: 'Blue', hex: '#006BAE', usage: 'Secondary actions, information', category: 'SECONDARY' },
-    { name: 'Orange', hex: '#FE8234', usage: 'Warning states, alerts', category: 'SECONDARY' },
-    { name: 'Dark Blue', hex: '#103C82', usage: 'Deep information states', category: 'SECONDARY' },
-    { name: 'Light Blue', hex: '#56AFD1', usage: 'Light information backgrounds', category: 'SECONDARY' },
-    { name: 'Fuschia', hex: '#9A0A4D', usage: 'Emphasis, highlights', category: 'SECONDARY' },
-    { name: 'Beige', hex: '#B69A81', usage: 'Neutral accent, subtle backgrounds', category: 'SECONDARY' },
-
-    // Neutral Colors
-    { name: 'Ivory', hex: '#F9F9F9', usage: 'Page backgrounds, light surfaces', category: 'NEUTRAL' },
-    { name: 'Light Grey', hex: '#D6D6D6', usage: 'Borders, secondary backgrounds', category: 'NEUTRAL' },
-    { name: 'Grey', hex: '#ADADAD', usage: 'Disabled text, secondary content', category: 'NEUTRAL' },
-    { name: 'Dark Grey', hex: '#6F6F6F', usage: 'Body text, descriptions', category: 'NEUTRAL' },
-
-    // Disabled States
-    { name: 'Gold Disabled', hex: '#FFE49E', usage: 'Disabled primary buttons', category: 'DISABLED' },
-    { name: 'Blue Disabled', hex: '#CCF0FF', usage: 'Disabled info states', category: 'DISABLED' },
-    { name: 'Purple Disabled', hex: '#EEE3FF', usage: 'Disabled purple elements', category: 'DISABLED' },
-    { name: 'Red Disabled', hex: '#FFCEC4', usage: 'Disabled delete actions', category: 'DISABLED' },
-    { name: 'Green Disabled', hex: '#E2EABF', usage: 'Disabled success states', category: 'DISABLED' },
-
-    // Semantic States
-    { name: 'Dark Red', hex: '#9A0005', usage: 'Pressed/active delete states', category: 'SEMANTIC' },
-    { name: 'Accent Gold', hex: '#C08B00', usage: 'Hover/focus gold states', category: 'SEMANTIC' },
-    { name: 'Accent Grey', hex: '#959595', usage: 'Hover/focus grey states', category: 'SEMANTIC' },
-    { name: 'Accent Red', hex: '#FA4D56', usage: 'Hover/focus red states', category: 'SEMANTIC' },
-
-    // Link States
-    { name: 'Link', hex: '#0F62FE', usage: 'Default link color', category: 'LINKS' },
-    { name: 'Link Hover', hex: '#054ADA', usage: 'Hovered link color', category: 'LINKS' },
-    { name: 'Link Visited', hex: '#8a3ffc', usage: 'Visited link color', category: 'LINKS' },
-  ];
-
-  return React.createElement(
-    'div',
-    { style: { padding: '40px', fontFamily: 'system-ui' } },
-    React.createElement('h1', null, 'McDonald\'s Dashboard Color Palette'),
-    React.createElement(
-      'div',
-      { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '24px', marginTop: '40px' } },
-      colors.map((color) =>
-        React.createElement(
-          'div',
-          { key: color.hex, style: { border: '1px solid #E8E8E8', borderRadius: '8px', overflow: 'hidden' } },
-          React.createElement('div', { style: { backgroundColor: color.hex, height: '120px' } }),
-          React.createElement(
-            'div',
-            { style: { padding: '16px' } },
-            React.createElement('h3', { style: { margin: '0 0 8px 0', fontSize: '16px', fontWeight: '600' } }, color.name),
-            React.createElement('code', { style: { display: 'block', fontSize: '12px', color: '#757575', marginBottom: '8px' } }, color.hex),
-            React.createElement('p', { style: { margin: 0, fontSize: '12px', color: '#757575' } }, color.usage)
-          )
-        )
-      )
+const Swatch = (key, usage) => {
+  const hex = color[key];
+  return React.createElement('div', { key, style: { border: '1px solid #E8E8E8', borderRadius: '8px', overflow: 'hidden' } },
+    React.createElement('div', { style: { backgroundColor: hex, height: '96px', borderBottom: '1px solid #E8E8E8' } }),
+    React.createElement('div', { style: { padding: '12px' } },
+      React.createElement('h3', { style: { margin: '0 0 4px 0', fontSize: '14px', fontWeight: 600, fontFamily: 'Speedee, sans-serif' } }, key),
+      React.createElement('code', { style: { display: 'block', fontSize: '12px', color: '#6f6f6f', marginBottom: '6px', fontFamily: 'Roboto Mono, monospace' } }, hex),
+      React.createElement('p', { style: { margin: 0, fontSize: '12px', color: '#6f6f6f' } }, usage)
     )
   );
 };
+
+export const ColorPalette = () =>
+  React.createElement('div', { style: { padding: '48px', fontFamily: 'Speedee, system-ui, sans-serif' } },
+    React.createElement('h1', { style: { margin: '0 0 8px 0' } }, "McDonald's Dashboard — Colors"),
+    React.createElement('p', { style: { margin: '0 0 32px 0', color: '#6f6f6f' } }, 'Renderizado desde _tokens.js (fuente única). El color de selección/acción del sistema es Gold.'),
+    ...GROUPS.map((g) => React.createElement('div', { key: g.title, style: { marginBottom: '40px' } },
+      React.createElement('h2', { style: { fontSize: '14px', letterSpacing: '0.5px', color: '#6f6f6f', margin: '0 0 16px 0' } }, g.title),
+      React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' } },
+        ...g.items.map(([k, u]) => Swatch(k, u)))
+    ))
+  );
