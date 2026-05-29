@@ -1,68 +1,61 @@
 import React, { useState } from 'react';
 
-const Tooltip = ({
-  text,
-  children,
-  position = 'top',
-  isDarkMode = false,
-}) => {
-  const [isVisible, setIsVisible] = useState(false);
+/**
+ * Tooltip — pixel-perfect from Figma (node 2713:5222)
+ * Always dark (#292929) with white text, 4px radius, caret pointing to the element.
+ * Positions: top/bottom/left/right. Sizes: small (1 line) / big (multi-line).
+ * Sits 4px from the anchor element.
+ */
 
-  const modes = {
-    light: {
-      background: '#292929',
-      text: '#FFFFFF',
-      shadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
-    },
-    dark: {
-      background: '#FFFFFF',
-      text: '#292929',
-      shadow: '0px 4px 12px rgba(255, 255, 255, 0.2)',
-    },
-  };
+const FONT = 'Speedee, system-ui, sans-serif';
+const BG = '#292929';
+const GAP = 4;
 
-  const mode = isDarkMode ? 'dark' : 'light';
-  const colors = modes[mode];
+const caret = (position) => {
+  const base = { position: 'absolute', width: 0, height: 0 };
+  switch (position) {
+    case 'top':    return { ...base, bottom: '-6px', left: '50%', transform: 'translateX(-50%)', borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderTop: `6px solid ${BG}` };
+    case 'bottom': return { ...base, top: '-6px', left: '50%', transform: 'translateX(-50%)', borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderBottom: `6px solid ${BG}` };
+    case 'left':   return { ...base, right: '-6px', top: '50%', transform: 'translateY(-50%)', borderTop: '6px solid transparent', borderBottom: '6px solid transparent', borderLeft: `6px solid ${BG}` };
+    case 'right':  return { ...base, left: '-6px', top: '50%', transform: 'translateY(-50%)', borderTop: '6px solid transparent', borderBottom: '6px solid transparent', borderRight: `6px solid ${BG}` };
+    default: return base;
+  }
+};
 
-  const positions = {
-    top: { bottom: '100%', left: '50%', transform: 'translateX(-50%) translateY(-8px)' },
-    bottom: { top: '100%', left: '50%', transform: 'translateX(-50%) translateY(8px)' },
-    left: { right: '100%', top: '50%', transform: 'translateY(-50%) translateX(-8px)' },
-    right: { left: '100%', top: '50%', transform: 'translateY(-50%) translateX(8px)' },
-  };
+const bubblePos = (position) => {
+  switch (position) {
+    case 'top':    return { bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: `${GAP + 6}px` };
+    case 'bottom': return { top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: `${GAP + 6}px` };
+    case 'left':   return { right: '100%', top: '50%', transform: 'translateY(-50%)', marginRight: `${GAP + 6}px` };
+    case 'right':  return { left: '100%', top: '50%', transform: 'translateY(-50%)', marginLeft: `${GAP + 6}px` };
+    default: return {};
+  }
+};
 
-  return React.createElement(
-    'div',
-    { style: { position: 'relative', display: 'inline-block' } },
-    React.createElement(
-      'div',
-      {
-        onMouseEnter: () => setIsVisible(true),
-        onMouseLeave: () => setIsVisible(false),
+const Tooltip = ({ text = 'Tooltip', position = 'top', size = 'small', children, alwaysVisible = false }) => {
+  const [show, setShow] = useState(false);
+  const visible = alwaysVisible || show;
+  const isBig = size === 'big';
+
+  return React.createElement('div', { style: { position: 'relative', display: 'inline-block' },
+    onMouseEnter: () => setShow(true), onMouseLeave: () => setShow(false) },
+    children,
+    visible && React.createElement('div', {
+      style: {
+        position: 'absolute', backgroundColor: BG, color: '#ffffff', borderRadius: '4px',
+        padding: isBig ? '8px 12px' : '6px 10px', fontFamily: FONT, fontSize: '12px', lineHeight: '16px',
+        letterSpacing: '-0.15px', whiteSpace: isBig ? 'normal' : 'nowrap', maxWidth: isBig ? '200px' : 'none',
+        zIndex: 1000, ...bubblePos(position),
       },
-      children
-    ),
-    isVisible && React.createElement(
-      'div',
-      {
-        style: {
-          position: 'absolute',
-          backgroundColor: colors.background,
-          color: colors.text,
-          padding: '8px 12px',
-          borderRadius: '4px',
-          fontSize: '12px',
-          fontFamily: 'Segoe UI, system-ui, sans-serif',
-          whiteSpace: 'nowrap',
-          zIndex: 1000,
-          boxShadow: colors.shadow,
-          ...positions[position],
-        },
-      },
-      text
+    },
+      text,
+      React.createElement('span', { style: caret(position) })
     )
   );
 };
+
+const Anchor = (label = 'Hover me') =>
+  React.createElement('button', { style: { padding: '8px 16px', backgroundColor: '#ffbc0d', border: 'none', borderRadius: '8px', cursor: 'pointer', fontFamily: FONT, fontSize: '14px' } }, label);
 
 export default {
   title: 'Components/Tooltip',
@@ -71,117 +64,18 @@ export default {
   tags: ['autodocs'],
   argTypes: {
     position: { control: 'select', options: ['top', 'bottom', 'left', 'right'] },
-    isDarkMode: { control: 'boolean' },
+    size: { control: 'select', options: ['small', 'big'] },
     text: { control: 'text' },
   },
 };
 
-export const Default = {
-  args: {
-    text: 'This is a tooltip',
-    children: React.createElement('button', {
-      style: {
-        padding: '8px 16px',
-        backgroundColor: '#FFBC0D',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        fontWeight: '600',
-      },
-    }, 'Hover me'),
-  },
-};
-
-export const DarkMode = {
-  args: {
-    text: 'Dark mode tooltip',
-    isDarkMode: true,
-    children: React.createElement('button', {
-      style: {
-        padding: '8px 16px',
-        backgroundColor: '#FFBC0D',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        fontWeight: '600',
-      },
-    }, 'Hover me'),
-  },
-  parameters: { backgrounds: { default: 'dark' } },
-};
+export const Default = { args: { text: 'Tooltip', position: 'top', children: Anchor() } };
+export const Big = { args: { text: 'Uso de cuatro líneas de texto para descripciones más extensas dentro del tooltip.', size: 'big', position: 'top', children: Anchor() } };
 
 export const AllPositions = {
-  render: () =>
-    React.createElement(
-      'div',
-      { style: { padding: '60px', fontFamily: 'system-ui', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '40px', height: '400px', alignItems: 'center', justifyItems: 'center' } },
-      React.createElement(
-        'div',
-        null,
-        React.createElement(Tooltip, {
-          text: 'Top tooltip',
-          position: 'top',
-          children: React.createElement('button', {
-            style: {
-              padding: '8px 16px',
-              backgroundColor: '#FFBC0D',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            },
-          }, 'Top')
-        })
-      ),
-      React.createElement(
-        'div',
-        null,
-        React.createElement(Tooltip, {
-          text: 'Right tooltip',
-          position: 'right',
-          children: React.createElement('button', {
-            style: {
-              padding: '8px 16px',
-              backgroundColor: '#FFBC0D',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            },
-          }, 'Right')
-        })
-      ),
-      React.createElement(
-        'div',
-        null,
-        React.createElement(Tooltip, {
-          text: 'Left tooltip',
-          position: 'left',
-          children: React.createElement('button', {
-            style: {
-              padding: '8px 16px',
-              backgroundColor: '#FFBC0D',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            },
-          }, 'Left')
-        })
-      ),
-      React.createElement(
-        'div',
-        null,
-        React.createElement(Tooltip, {
-          text: 'Bottom tooltip',
-          position: 'bottom',
-          children: React.createElement('button', {
-            style: {
-              padding: '8px 16px',
-              backgroundColor: '#FFBC0D',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            },
-          }, 'Bottom')
-        })
-      )
-    ),
+  render: () => React.createElement('div', { style: { padding: '80px', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '64px', justifyItems: 'center', fontFamily: FONT } },
+    ...['top', 'right', 'left', 'bottom'].map((p) =>
+      React.createElement(Tooltip, { key: p, text: 'Tooltip', position: p, alwaysVisible: true, children: Anchor(p) })
+    )
+  ),
 };
