@@ -1,10 +1,6 @@
 import type { StorybookConfig } from '@storybook/react';
 
 const config: StorybookConfig = {
-  framework: '@storybook/react',
-  core: {
-    builder: '@storybook/builder-vite',
-  },
   stories: [
     '../stories/**/*.mdx',
     '../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
@@ -14,8 +10,13 @@ const config: StorybookConfig = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
   ],
+  framework: {
+    name: '@storybook/react',
+    options: {},
+  },
   docs: {
     autodocs: 'tag',
   },
 };
+
 export default config;
