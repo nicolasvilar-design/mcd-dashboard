@@ -1,236 +1,105 @@
 import React, { useState } from 'react';
 
-const Toggle = ({
-  label,
-  toggled = false,
-  disabled = false,
-  isDarkMode = false,
-  onChange,
-  size = 'medium',
-}) => {
-  const [isToggled, setIsToggled] = useState(toggled);
+/**
+ * Toggle — pixel-perfect from Figma (node 3124:6300)
+ * ON track = gold #ffbc0d (layer-07) · OFF track = #adadad (layer-04) · thumb = white.
+ * Anatomy: thumb 24px · clickable area 48px. States: enabled/hovered/focused/pressed/disabled/skeleton.
+ * Disabled ON = #ffe49e. Skeleton = #d6d6d6 placeholder.
+ */
 
-  const modes = {
-    light: {
-      onBackground: '#1F6437',
-      offBackground: '#D6D6D6',
-      thumbLight: '#FFFFFF',
-      disabledOnBackground: '#ADADAD',
-      disabledOffBackground: '#D6D6D6',
-      text: '#292929',
-      disabledText: '#ADADAD',
+const FONT = 'Speedee, system-ui, sans-serif';
+
+const trackColor = (on, state) => {
+  if (state === 'disabled') return on ? '#ffe49e' : '#d6d6d6';
+  if (on) {
+    if (state === 'pressed') return '#c08800';
+    if (state === 'hovered') return '#ffd46a';
+    return '#ffbc0d';
+  }
+  if (state === 'pressed') return '#959595';
+  if (state === 'hovered') return '#bdbdbd';
+  return '#adadad';
+};
+
+const Toggle = ({ on: onProp = false, state = 'enabled', label, interactive = false, onChange }) => {
+  const [on, setOn] = useState(onProp);
+  const isControlled = !interactive;
+  const value = isControlled ? onProp : on;
+  const isSkeleton = state === 'skeleton';
+  const disabled = state === 'disabled';
+
+  const TRACK_W = 48, TRACK_H = 28, THUMB = 24;
+
+  if (isSkeleton) {
+    return React.createElement('div', { style: { width: `${TRACK_W}px`, height: `${TRACK_H}px`, borderRadius: `${TRACK_H}px`, backgroundColor: '#d6d6d6' } });
+  }
+
+  const handle = () => { if (interactive && !disabled) { setOn((o) => { onChange?.(!o); return !o; }); } };
+
+  const toggleEl = React.createElement('button', {
+    onClick: handle, disabled,
+    style: {
+      width: `${TRACK_W}px`, height: `${TRACK_H}px`, borderRadius: `${TRACK_H}px`,
+      backgroundColor: trackColor(value, state), border: state === 'focused' ? '2px solid #0f62fe' : 'none',
+      position: 'relative', cursor: disabled ? 'not-allowed' : 'pointer', padding: 0,
+      transition: 'background-color 150ms cubic-bezier(0.4,0,0.2,1)', boxSizing: 'border-box',
+      boxShadow: state === 'focused' ? '0 0 0 2px #fff inset' : 'none', flexShrink: 0,
     },
-    dark: {
-      onBackground: '#1F6437',
-      offBackground: '#4B4B4B',
-      thumbLight: '#FFFFFF',
-      disabledOnBackground: '#757575',
-      disabledOffBackground: '#2A2A2A',
-      text: '#FFFFFF',
-      disabledText: '#757575',
-    },
-  };
-
-  const sizes = {
-    small: { width: '36px', height: '20px', thumbSize: '16px', thumbTransform: 'translateX(2px)' },
-    medium: { width: '48px', height: '24px', thumbSize: '20px', thumbTransform: 'translateX(2px)' },
-    large: { width: '60px', height: '28px', thumbSize: '24px', thumbTransform: 'translateX(2px)' },
-  };
-
-  const mode = isDarkMode ? 'dark' : 'light';
-  const colors = modes[mode];
-  const sizeStyle = sizes[size];
-
-  const handleToggle = () => {
-    const newValue = !isToggled;
-    setIsToggled(newValue);
-    onChange?.(newValue);
-  };
-
-  const toggleBackground = disabled
-    ? (isToggled ? colors.disabledOnBackground : colors.disabledOffBackground)
-    : (isToggled ? colors.onBackground : colors.offBackground);
-
-  const thumbTranslate = isToggled
-    ? `translateX(calc(${sizeStyle.width} - ${sizeStyle.thumbSize} - 2px))`
-    : sizeStyle.thumbTransform;
-
-  const containerStyles = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '12px',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-  };
-
-  const toggleStyles = {
-    width: sizeStyle.width,
-    height: sizeStyle.height,
-    backgroundColor: toggleBackground,
-    borderRadius: '12px',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    flexShrink: 0,
-    border: 'none',
-    padding: 0,
-    opacity: disabled ? 0.7 : 1,
-  };
-
-  const thumbStyles = {
-    width: sizeStyle.thumbSize,
-    height: sizeStyle.thumbSize,
-    backgroundColor: colors.thumbLight,
-    borderRadius: '50%',
-    transition: 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    transform: thumbTranslate,
-    position: 'absolute',
-    left: '2px',
-  };
-
-  return React.createElement(
-    'div',
-    { style: containerStyles, onClick: !disabled ? handleToggle : undefined },
-    React.createElement(
-      'button',
-      {
-        onClick: handleToggle,
-        disabled,
-        style: {
-          ...toggleStyles,
-          outline: 'none',
-        },
-        aria: { label: label || 'Toggle' },
-      },
-      React.createElement('div', { style: thumbStyles })
-    ),
-    label && React.createElement('span', {
+  },
+    React.createElement('span', {
       style: {
-        fontSize: '14px',
-        fontFamily: 'Segoe UI, system-ui, sans-serif',
-        color: disabled ? colors.disabledText : colors.text,
-        fontWeight: '500',
-        userSelect: 'none',
+        position: 'absolute', top: '50%', left: value ? `${TRACK_W - THUMB - 2}px` : '2px',
+        transform: 'translateY(-50%)', width: `${THUMB}px`, height: `${THUMB}px`, borderRadius: '50%',
+        backgroundColor: disabled ? '#f9f9f9' : '#ffffff', transition: 'left 150ms cubic-bezier(0.4,0,0.2,1)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
       },
-    }, label)
+    })
+  );
+
+  if (!label) return toggleEl;
+  return React.createElement('label', { style: { display: 'inline-flex', alignItems: 'center', gap: '12px', cursor: disabled ? 'not-allowed' : 'pointer' } },
+    toggleEl,
+    React.createElement('span', { style: { fontFamily: FONT, fontSize: '14px', letterSpacing: '-0.15px', color: disabled ? '#adadad' : '#292929' } }, label)
   );
 };
 
 export default {
   title: 'Components/Toggle',
   component: Toggle,
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: { layout: 'centered' },
   tags: ['autodocs'],
   argTypes: {
-    toggled: {
-      control: 'boolean',
-    },
-    disabled: {
-      control: 'boolean',
-    },
-    isDarkMode: {
-      control: 'boolean',
-    },
-    size: {
-      control: 'select',
-      options: ['small', 'medium', 'large'],
-    },
-    label: {
-      control: 'text',
-    },
+    on: { control: 'boolean' },
+    state: { control: 'select', options: ['enabled', 'hovered', 'focused', 'pressed', 'disabled', 'skeleton'] },
+    label: { control: 'text' },
+    interactive: { control: 'boolean' },
   },
 };
 
-export const Off = {
-  args: {
-    label: 'Toggle Off',
-    toggled: false,
-  },
-};
-
-export const On = {
-  args: {
-    label: 'Toggle On',
-    toggled: true,
-  },
-};
-
-export const Disabled = {
-  args: {
-    label: 'Toggle Disabled',
-    disabled: true,
-  },
-};
-
-export const DisabledOn = {
-  args: {
-    label: 'Toggle On (Disabled)',
-    toggled: true,
-    disabled: true,
-  },
-};
-
-export const DarkMode = {
-  args: {
-    label: 'Dark Mode Toggle',
-    isDarkMode: true,
-  },
-  parameters: {
-    backgrounds: { default: 'dark' },
-  },
-};
-
-export const Sizes = {
-  render: () => {
-    return React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', gap: '32px' } },
-      React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Toggle Sizes'),
-      React.createElement(
-        'div',
-        { style: { display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '300px' } },
-        React.createElement(Toggle, { label: 'Small', size: 'small', toggled: true }),
-        React.createElement(Toggle, { label: 'Medium', size: 'medium', toggled: true }),
-        React.createElement(Toggle, { label: 'Large', size: 'large', toggled: true }),
-      )
-    );
-  },
-};
+export const Off = { args: { on: false } };
+export const On = { args: { on: true } };
+export const Interactive = { args: { on: false, interactive: true } };
+export const Disabled = { args: { on: true, state: 'disabled' } };
 
 export const AllStates = {
   render: () => {
-    return React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', gap: '48px' } },
-      React.createElement(
-        'div',
-        null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Light Mode States'),
-        React.createElement(
-          'div',
-          { style: { display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '300px' } },
-          React.createElement(Toggle, { label: 'Off', toggled: false }),
-          React.createElement(Toggle, { label: 'On', toggled: true }),
-          React.createElement(Toggle, { label: 'Disabled Off', disabled: true }),
-          React.createElement(Toggle, { label: 'Disabled On', toggled: true, disabled: true }),
-        ),
-      ),
-      React.createElement(
-        'div',
-        { style: { backgroundColor: '#1A1A1A', padding: '32px', borderRadius: '8px' } },
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' } }, 'Dark Mode States'),
-        React.createElement(
-          'div',
-          { style: { display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '300px' } },
-          React.createElement(Toggle, { label: 'Off', toggled: false, isDarkMode: true }),
-          React.createElement(Toggle, { label: 'On', toggled: true, isDarkMode: true }),
-          React.createElement(Toggle, { label: 'Disabled Off', disabled: true, isDarkMode: true }),
-          React.createElement(Toggle, { label: 'Disabled On', toggled: true, disabled: true, isDarkMode: true }),
-        ),
-      ),
+    const states = ['enabled', 'hovered', 'focused', 'pressed', 'disabled', 'skeleton'];
+    return React.createElement('div', { style: { padding: '40px', fontFamily: FONT, display: 'flex', flexDirection: 'column', gap: '20px' } },
+      React.createElement('h2', { style: { margin: '0 0 8px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Toggle — states (On / Off)'),
+      ...states.map((st) => React.createElement('div', { key: st, style: { display: 'flex', alignItems: 'center', gap: '24px' } },
+        React.createElement('span', { style: { width: '70px', fontSize: '12px', color: '#6f6f6f' } }, st),
+        React.createElement(Toggle, { on: true, state: st }),
+        React.createElement(Toggle, { on: false, state: st })
+      ))
     );
   },
+};
+
+export const WithValue = {
+  render: () => React.createElement('div', { style: { padding: '40px', fontFamily: FONT, display: 'flex', flexDirection: 'column', gap: '16px' } },
+    React.createElement('h3', { style: { margin: '0 0 8px 0', fontSize: '14px', color: '#6f6f6f' } }, 'Swich + Value'),
+    React.createElement(Toggle, { on: true, label: 'Funcionalidad prendida' }),
+    React.createElement(Toggle, { on: false, label: 'Funcionalidad apagada' }),
+    React.createElement(Toggle, { on: false, state: 'disabled', label: 'Funcionalidad deshabilitada' })
+  ),
 };
