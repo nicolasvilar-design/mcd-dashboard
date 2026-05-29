@@ -1,156 +1,86 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Stepper = ({
-  steps = [],
-  isDarkMode = false,
-  onStepChange,
-}) => {
-  const [currentStep, setCurrentStep] = useState(0);
+/**
+ * Progress indicator item (Stepper) — pixel-perfect from Figma (node 2816:7588)
+ * Horizontal steps + connector lines. Step states:
+ *   pending (dotted gray circle) · active (gold half/partial) · complete (gold + ✓)
+ *   error (red circle + !) · upcoming (dotted gray) · skeleton (dotted + gray bar)
+ * Connector line: gold once passed, gray otherwise.
+ */
 
-  const modes = {
-    light: {
-      completedBg: '#1F6437',
-      completedText: '#FFFFFF',
-      activeBg: '#FFBC0D',
-      activeText: '#292929',
-      inactiveBg: '#D6D6D6',
-      inactiveText: '#ADADAD',
-      lineColor: '#D6D6D6',
-      completedLineColor: '#1F6437',
-      labelText: '#292929',
-    },
-    dark: {
-      completedBg: '#1F6437',
-      completedText: '#FFFFFF',
-      activeBg: '#FFBC0D',
-      activeText: '#292929',
-      inactiveBg: '#4B4B4B',
-      inactiveText: '#ADADAD',
-      lineColor: '#757575',
-      completedLineColor: '#1F6437',
-      labelText: '#FFFFFF',
-    },
-  };
+const FONT = 'Speedee, system-ui, sans-serif';
+const GOLD = '#ffbc0d';
+const GREY = '#adadad';
+const RED = '#db0007';
 
-  const mode = isDarkMode ? 'dark' : 'light';
-  const colors = modes[mode];
-
-  const handleStepClick = (index) => {
-    setCurrentStep(index);
-    onStepChange?.(index);
-  };
-
-  return React.createElement(
-    'div',
-    { style: { fontFamily: 'system-ui' } },
-    React.createElement(
-      'div',
-      { style: { display: 'flex', alignItems: 'center', gap: '0', marginBottom: '24px' } },
-      steps.map((step, index) =>
-        React.createElement(
-          React.Fragment,
-          { key: index },
-          React.createElement(
-            'button',
-            {
-              onClick: () => handleStepClick(index),
-              style: {
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                border: 'none',
-                backgroundColor:
-                  index < currentStep
-                    ? colors.completedBg
-                    : index === currentStep
-                      ? colors.activeBg
-                      : colors.inactiveBg,
-                color:
-                  index < currentStep
-                    ? colors.completedText
-                    : index === currentStep
-                      ? colors.activeText
-                      : colors.inactiveText,
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontSize: '14px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              },
-            },
-            index < currentStep ? '✓' : index + 1
-          ),
-          index < steps.length - 1 &&
-            React.createElement('div', {
-              style: {
-                flex: 1,
-                height: '2px',
-                backgroundColor:
-                  index < currentStep ? colors.completedLineColor : colors.lineColor,
-                margin: '0 8px',
-              },
-            })
-        )
-      )
-    ),
-    React.createElement(
-      'div',
-      { style: { display: 'grid', gridTemplateColumns: `repeat(${steps.length}, 1fr)`, gap: '16px' } },
-      steps.map((step, index) =>
-        React.createElement('div', { key: index, style: { textAlign: 'center' } },
-          React.createElement('p', {
-            style: {
-              margin: '0',
-              fontSize: '14px',
-              fontWeight: index === currentStep ? '600' : '500',
-              color: colors.labelText,
-            },
-          }, step)
-        )
-      )
-    )
-  );
+const StepCircle = ({ state }) => {
+  const common = { width: 18, height: 18, viewBox: '0 0 24 24' };
+  switch (state) {
+    case 'complete':
+      return React.createElement('svg', { ...common, fill: GOLD },
+        React.createElement('circle', { cx: 12, cy: 12, r: 11 }),
+        React.createElement('path', { d: 'M7 12l3 3 6-6', stroke: '#292929', strokeWidth: 2, fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' }));
+    case 'active':
+      return React.createElement('svg', { ...common, fill: 'none' },
+        React.createElement('circle', { cx: 12, cy: 12, r: 10, stroke: GOLD, strokeWidth: 2 }),
+        React.createElement('path', { d: 'M12 2a10 10 0 0 1 0 20z', fill: GOLD }));
+    case 'error':
+      return React.createElement('svg', { ...common, fill: 'none' },
+        React.createElement('circle', { cx: 12, cy: 12, r: 10, stroke: RED, strokeWidth: 2 }),
+        React.createElement('path', { d: 'M12 7v6M12 16v.5', stroke: RED, strokeWidth: 2, strokeLinecap: 'round' }));
+    default: // pending / upcoming
+      return React.createElement('svg', { ...common, fill: 'none' },
+        React.createElement('circle', { cx: 12, cy: 12, r: 10, stroke: GREY, strokeWidth: 2, strokeDasharray: '3 3' }));
+  }
 };
 
+const Stepper = ({ steps = [] }) =>
+  React.createElement('div', { style: { display: 'flex', alignItems: 'center', fontFamily: FONT, width: '100%' } },
+    ...steps.map((s, i) => {
+      const passed = s.state === 'complete' || s.state === 'active';
+      const isLast = i === steps.length - 1;
+      return React.createElement('div', { key: i, style: { display: 'flex', alignItems: 'center', flex: isLast ? '0 0 auto' : '1 1 0' } },
+        React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 } },
+          s.state === 'skeleton'
+            ? React.createElement('div', { style: { width: '18px', height: '18px', borderRadius: '50%', border: `2px dashed ${GREY}` } })
+            : React.createElement(StepCircle, { state: s.state }),
+          s.state === 'skeleton'
+            ? React.createElement('div', { style: { width: '70px', height: '10px', borderRadius: '4px', backgroundColor: '#d6d6d6' } })
+            : React.createElement('span', { style: { fontSize: '13px', color: s.state === 'pending' || s.state === 'upcoming' ? '#adadad' : '#292929', whiteSpace: 'nowrap' } }, s.label || 'Item Step')
+        ),
+        !isLast && React.createElement('div', { style: { flex: 1, height: '2px', margin: '0 12px', backgroundColor: passed ? GOLD : '#d6d6d6' } })
+      );
+    })
+  );
+
 export default {
-  title: 'Components/Stepper',
+  title: 'Components/Progress Indicator (Stepper)',
   component: Stepper,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
-  argTypes: {
-    isDarkMode: { control: 'boolean' },
-  },
 };
-
-const sampleSteps = ['Personal', 'Address', 'Payment', 'Review', 'Confirmation'];
 
 export const Default = {
-  args: { steps: sampleSteps },
+  render: () => React.createElement('div', { style: { padding: '40px' } },
+    React.createElement(Stepper, { steps: [
+      { label: 'Item Step', state: 'pending' },
+      { label: 'Item Step', state: 'active' },
+      { label: 'Item Step', state: 'complete' },
+      { label: 'Item Step', state: 'error' },
+      { label: 'Item Step', state: 'upcoming' },
+      { label: '', state: 'skeleton' },
+    ] })
+  ),
 };
 
-export const DarkMode = {
-  args: { steps: sampleSteps, isDarkMode: true },
-  parameters: { backgrounds: { default: 'dark' } },
-};
-
-export const AllStates = {
-  render: () =>
-    React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', gap: '48px' } },
-      React.createElement(
-        'div',
-        null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Light Mode'),
-        React.createElement(Stepper, { steps: sampleSteps })
-      ),
-      React.createElement(
-        'div',
-        { style: { backgroundColor: '#1A1A1A', padding: '32px', borderRadius: '8px' } },
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' } }, 'Dark Mode'),
-        React.createElement(Stepper, { steps: sampleSteps, isDarkMode: true })
-      )
-    ),
+export const InProgress = {
+  render: () => React.createElement('div', { style: { padding: '40px' } },
+    React.createElement(Stepper, { steps: [
+      { label: 'Personal', state: 'complete' },
+      { label: 'Dirección', state: 'complete' },
+      { label: 'Pago', state: 'active' },
+      { label: 'Revisión', state: 'pending' },
+      { label: 'Confirmación', state: 'pending' },
+    ] })
+  ),
 };
