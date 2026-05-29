@@ -1,205 +1,123 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { EASING, DURATION, injectMotion } from './_motion';
 
-const Textarea = ({
-  placeholder,
-  value: controlledValue,
-  disabled = false,
-  error = false,
-  isDarkMode = false,
-  onChange,
-  label,
+/**
+ * Text Area — pixel-perfect from Figma (TextField section, node 2723:28041)
+ * Part of the TextField family. Types: Default · Focus · Error · Warning · Disabled.
+ * Filled style: layer-02 (#f9f9f9) bg, 4px radius, 8px padding, Speedee 14/16 -0.15px.
+ * Microinteraction: focus border + bg crossfade with strong ease-out (no movement).
+ */
+
+injectMotion();
+
+const FONT = 'Speedee, system-ui, sans-serif';
+
+const TYPE_SPEC = {
+  default: { bg: '#f9f9f9', border: '1px solid transparent', support: '#6f6f6f' },
+  focus:   { bg: '#ffffff', border: '2px solid #292929',     support: '#6f6f6f' },
+  error:   { bg: '#ffffff', border: '1px solid #db0007',     support: '#db0007' },
+  warning: { bg: '#ffffff', border: '1px solid #fe8234',     support: '#fe8234' },
+  disabled:{ bg: '#d6d6d6', border: '1px solid transparent', support: '#adadad' },
+};
+
+const TextArea = ({
+  label = 'Label',
+  placeholder = 'Input text',
+  value: controlled,
+  type = 'default',
   rows = 4,
   maxLength,
+  supportingText,
+  width = 328,
 }) => {
-  const [value, setValue] = useState(controlledValue || '');
+  const [value, setValue] = useState(controlled || '');
+  const [focused, setFocused] = useState(false);
+  const ref = useRef(null);
 
-  const modes = {
-    light: {
-      background: '#FFFFFF',
-      border: '#ADADAD',
-      text: '#292929',
-      placeholder: '#ADADAD',
-      focusBorder: '#006BAE',
-      errorBorder: '#DB0007',
-      errorText: '#DB0007',
-      disabledBackground: '#D6D6D6',
-      disabledBorder: '#ADADAD',
-      disabledText: '#ADADAD',
-    },
-    dark: {
-      background: '#2A2A2A',
-      border: '#757575',
-      text: '#FFFFFF',
-      placeholder: '#ADADAD',
-      focusBorder: '#56AFD1',
-      errorBorder: '#FF6B6B',
-      errorText: '#FF6B6B',
-      disabledBackground: '#1A1A1A',
-      disabledBorder: '#4B4B4B',
-      disabledText: '#757575',
-    },
-  };
+  const disabled = type === 'disabled';
+  // when uncontrolled & focused, surface the focus visual (unless an error/warning type is forced)
+  const effective = focused && type === 'default' ? 'focus' : type;
+  const spec = TYPE_SPEC[effective];
 
-  const mode = isDarkMode ? 'dark' : 'light';
-  const colors = modes[mode];
+  const v = controlled !== undefined ? controlled : value;
+  const showSupport = supportingText || type === 'error' || type === 'warning';
+  const supportMsg = supportingText || (type === 'error' ? 'Mensaje de error' : type === 'warning' ? 'Mensaje de advertencia' : '');
 
-  const handleChange = (e) => {
-    setValue(e.target.value);
-    onChange?.(e.target.value);
-  };
-
-  const textareaStyles = {
-    width: '100%',
-    padding: '12px 16px',
-    backgroundColor: disabled ? colors.disabledBackground : colors.background,
-    border: `1px solid ${error ? colors.errorBorder : (disabled ? colors.disabledBorder : colors.border)}`,
-    borderRadius: '4px',
-    fontSize: '14px',
-    fontFamily: 'Segoe UI, system-ui, sans-serif',
-    color: disabled ? colors.disabledText : colors.text,
-    cursor: disabled ? 'not-allowed' : 'text',
-    transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    boxSizing: 'border-box',
-    resize: 'vertical',
-    minHeight: `${rows * 24 + 24}px`,
-    fontFamily: 'Segoe UI, system-ui, sans-serif',
-    lineHeight: '1.5',
-  };
-
-  const containerStyles = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    width: '100%',
-  };
-
-  const charCount = value.length;
-  const hasMaxLength = maxLength !== undefined;
-  const isFull = hasMaxLength && charCount >= maxLength;
-
-  return React.createElement(
-    'div',
-    { style: containerStyles },
-    label && React.createElement('label', {
-      style: {
-        fontSize: '14px',
-        fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontWeight: '600',
-        color: disabled ? colors.disabledText : colors.text,
-      },
-    }, label),
+  return React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 0, width: typeof width === 'number' ? `${width}px` : width } },
+    React.createElement('div', { style: { display: 'flex', alignItems: 'center', padding: '8px' } },
+      React.createElement('span', { style: { fontFamily: FONT, fontSize: '14px', lineHeight: '16px', letterSpacing: '-0.15px', color: disabled ? '#adadad' : '#292929' } }, label)
+    ),
     React.createElement('textarea', {
+      ref,
       placeholder,
-      value: controlledValue !== undefined ? controlledValue : value,
+      value: v,
       disabled,
-      onChange: handleChange,
+      rows,
       maxLength,
-      style: textareaStyles,
+      onChange: (e) => { setValue(e.target.value); },
+      onFocus: () => setFocused(true),
+      onBlur: () => setFocused(false),
+      style: {
+        width: '100%', boxSizing: 'border-box', resize: 'vertical', minHeight: `${rows * 20 + 16}px`,
+        padding: '8px', backgroundColor: spec.bg, border: spec.border, borderRadius: '4px',
+        fontFamily: FONT, fontSize: '14px', lineHeight: '20px', letterSpacing: '-0.15px',
+        color: disabled ? '#adadad' : '#292929', outline: 'none',
+        // Microinteraction: only animate color/border/bg — never layout. Reduced-motion safe.
+        transition: `border-color ${DURATION.dropdown}ms ${EASING.out}, background-color ${DURATION.dropdown}ms ${EASING.out}`,
+      },
     }),
-    (error || hasMaxLength) && React.createElement(
-      'div',
-      { style: { display: 'flex', justifyContent: 'space-between', fontSize: '12px' } },
-      error && React.createElement('span', {
-        style: { color: colors.errorText },
-      }, 'This field is required or invalid'),
-      hasMaxLength && React.createElement('span', {
-        style: { color: isFull ? colors.errorText : colors.text },
-      }, `${charCount}/${maxLength}`)
+    (showSupport || maxLength) && React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', padding: '8px' } },
+      React.createElement('span', { style: { fontFamily: FONT, fontSize: '12px', lineHeight: '16px', letterSpacing: '-0.15px', color: spec.support } }, showSupport ? supportMsg : ''),
+      maxLength && React.createElement('span', { style: { fontFamily: FONT, fontSize: '12px', color: v.length >= maxLength ? '#db0007' : '#6f6f6f' } }, `${v.length}/${maxLength}`)
     )
   );
 };
 
 export default {
-  title: 'Components/Textarea',
-  component: Textarea,
-  parameters: { layout: 'padded' },
+  title: 'Components/TextField/Text Area',
+  component: TextArea,
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`**Text Area** — campo multilínea de la familia TextField. Mismo estilo *filled* (\`#f9f9f9\`, radio 4px, Speedee 14/16).
+
+#### ✅ Do's
+- Usalo cuando el contenido esperado supera una línea (descripciones, comentarios, notas).
+- Mostrá contador \`x/max\` cuando haya \`maxLength\`; ponelo en rojo al llegar al límite.
+- Permití redimensionar en vertical (\`resize: vertical\`) y dejá una altura mínima cómoda.
+
+#### 🚫 Don'ts
+- No lo uses para datos de una sola línea (usá **TextField**).
+- No animes el alto en focus — solo borde/fondo (evita reflow y mareo).
+- No deshabilites el resize horizontal con texto largo sin necesidad.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
-    disabled: { control: 'boolean' },
-    error: { control: 'boolean' },
-    isDarkMode: { control: 'boolean' },
+    type: { control: 'select', options: ['default', 'focus', 'error', 'warning', 'disabled'] },
     rows: { control: { type: 'range', min: 2, max: 10 } },
-    placeholder: { control: 'text' },
-    label: { control: 'text' },
     maxLength: { control: 'number' },
+    label: { control: 'text' },
+    placeholder: { control: 'text' },
+    supportingText: { control: 'text' },
   },
 };
 
-export const Default = {
-  args: {
-    label: 'Message',
-    placeholder: 'Enter your message...',
-    rows: 4,
-  },
-};
+export const Default = { args: { label: 'Label', placeholder: 'Input text' } };
+export const Focus = { args: { label: 'Label', type: 'focus', value: 'Texto en edición' } };
+export const ErrorState = { args: { label: 'Label', type: 'error', supportingText: 'Este campo es obligatorio' } };
+export const Warning = { args: { label: 'Label', type: 'warning', supportingText: 'Revisá el contenido ingresado' } };
+export const Disabled = { args: { label: 'Label', type: 'disabled', value: 'Contenido deshabilitado' } };
+export const WithCounter = { args: { label: 'Bio', placeholder: 'Contanos sobre vos…', maxLength: 200, rows: 3 } };
 
-export const WithMaxLength = {
-  args: {
-    label: 'Bio (max 200 characters)',
-    placeholder: 'Tell us about yourself...',
-    rows: 3,
-    maxLength: 200,
+export const AllTypes = {
+  render: () => {
+    const types = [['Default', 'default'], ['Focus', 'focus'], ['Error', 'error'], ['Warning', 'warning'], ['Disabled', 'disabled']];
+    return React.createElement('div', { style: { padding: '40px', fontFamily: FONT, display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '400px' } },
+      React.createElement('h2', { style: { margin: '0 0 8px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Text Area — All Types'),
+      ...types.map(([labelTxt, t]) => React.createElement('div', { key: t, style: { display: 'flex', flexDirection: 'column', gap: '4px' } },
+        React.createElement('span', { style: { fontSize: '12px', color: '#6f6f6f', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' } }, labelTxt),
+        React.createElement(TextArea, { type: t, supportingText: t === 'error' ? 'Mensaje de error' : t === 'warning' ? 'Mensaje de advertencia' : undefined })
+      ))
+    );
   },
-};
-
-export const WithError = {
-  args: {
-    label: 'Comments',
-    placeholder: 'Enter your comments...',
-    error: true,
-    rows: 4,
-  },
-};
-
-export const Disabled = {
-  args: {
-    label: 'Disabled Field',
-    value: 'This field is disabled',
-    disabled: true,
-    rows: 4,
-  },
-};
-
-export const DarkMode = {
-  args: {
-    label: 'Dark Mode Textarea',
-    placeholder: 'Type your message...',
-    isDarkMode: true,
-    rows: 4,
-  },
-  parameters: { backgrounds: { default: 'dark' } },
-};
-
-export const AllStates = {
-  render: () =>
-    React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', gap: '48px' } },
-      React.createElement(
-        'div',
-        null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Light Mode'),
-        React.createElement(
-          'div',
-          { style: { maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '24px' } },
-          React.createElement(Textarea, { label: 'Default', placeholder: 'Enter text...' }),
-          React.createElement(Textarea, { label: 'With Max Length', placeholder: 'Max 100 chars', maxLength: 100 }),
-          React.createElement(Textarea, { label: 'With Error', error: true }),
-          React.createElement(Textarea, { label: 'Disabled', disabled: true, value: 'Disabled text' }),
-        ),
-      ),
-      React.createElement(
-        'div',
-        { style: { backgroundColor: '#1A1A1A', padding: '40px', borderRadius: '8px' } },
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' } }, 'Dark Mode'),
-        React.createElement(
-          'div',
-          { style: { maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '24px' } },
-          React.createElement(Textarea, { label: 'Default', placeholder: 'Enter text...', isDarkMode: true }),
-          React.createElement(Textarea, { label: 'With Max Length', placeholder: 'Max 100 chars', maxLength: 100, isDarkMode: true }),
-          React.createElement(Textarea, { label: 'With Error', error: true, isDarkMode: true }),
-          React.createElement(Textarea, { label: 'Disabled', disabled: true, value: 'Disabled text', isDarkMode: true }),
-        ),
-      )
-    ),
 };

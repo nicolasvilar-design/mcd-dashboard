@@ -1,4 +1,7 @@
 import React from 'react';
+import { EASING, DURATION, injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Button — pixel-perfect from Figma (node 4298:13512)
@@ -49,13 +52,16 @@ const Button = ({ variant = 'primary', size = 'medium', state = 'enabled', child
 
   return React.createElement('button', {
     disabled,
+    className: disabled ? undefined : 'mcd-pressable',
     style: {
       height: sz.height, padding: sz.padding, fontSize: sz.fontSize,
       fontFamily: FONT, fontWeight: 400, lineHeight: '16px', letterSpacing: '-0.15px',
       backgroundColor: bg, color: textColor, border, borderRadius: '8px',
       cursor: disabled ? 'not-allowed' : 'pointer',
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)', boxSizing: 'border-box',
+      // Microinteraction: scale(0.97) on :active via .mcd-pressable. Specific props only (no `all`).
+      transition: `background-color ${DURATION.press}ms ${EASING.out}, border-color ${DURATION.press}ms ${EASING.out}, color ${DURATION.press}ms ${EASING.out}`,
+      boxSizing: 'border-box',
     },
   }, children);
 };
@@ -63,7 +69,23 @@ const Button = ({ variant = 'primary', size = 'medium', state = 'enabled', child
 export default {
   title: 'Components/Button',
   component: Button,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component:
+`Botón de acción. 3 variantes (primary/secondary/delete) × 5 estados.
+
+**Microinteracción:** \`scale(0.97)\` en \`:active\` con ease-out fuerte (\`cubic-bezier(0.23,1,0.32,1)\`, ${DURATION.press}ms) para feedback de presión inmediato. Respeta \`prefers-reduced-motion\`.
+
+#### ✅ Do's
+- Una sola acción primaria (gold) por vista; el resto secundarias.
+- Mantené el CTA habilitado por defecto; marcá errores en el formulario, no deshabilites el botón.
+- Verbo de acción claro y corto en el label ("Guardar", "Crear restaurante").
+
+#### 🚫 Don'ts
+- No uses \`delete\` (rojo) para acciones no destructivas.
+- No deshabilites por errores de validación — guiá al usuario.
+- No animes botones disparados por teclado de forma repetida; el press feedback alcanza.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     variant: { control: 'select', options: ['primary', 'secondary', 'delete'] },

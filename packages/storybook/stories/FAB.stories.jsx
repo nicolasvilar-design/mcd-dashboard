@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { EASING, DURATION, injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * FAB — Floating Action Button · pixel-perfect from Figma (node 3124:6304)
@@ -55,13 +58,15 @@ const FAB = ({
   return React.createElement(
     'button',
     {
+      className: 'mcd-pressable mcd-hover-lift',
       style: {
         width: `${px}px`, height: `${px}px`, borderRadius: '50%',
         backgroundColor: spec.bg, border: spec.border,
         boxShadow: floating ? ELEVATION : 'none',
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
         cursor: 'pointer', padding: 0,
-        transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+        // Floating element: subtle hover-lift + press scale, specific props only.
+        transition: `background-color ${DURATION.press}ms ${EASING.out}, transform ${DURATION.press}ms ${EASING.out}, box-shadow ${DURATION.press}ms ${EASING.out}`,
         fontFamily: 'Speedee, system-ui, sans-serif',
       },
     },
@@ -76,7 +81,23 @@ const FAB = ({
 export default {
   title: 'Components/FAB',
   component: FAB,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component:
+`Floating Action Button — acción principal flotante. Small (32px) / Medium (48px).
+
+**Microinteracción:** hover-lift sutil (\`translateY(-1px)\`, solo en punteros finos) + \`scale(0.97)\` al presionar, con ease-out fuerte.
+
+#### ✅ Do's
+- Reservalo para LA acción principal de la pantalla (crear, agregar).
+- Mantené la sombra de elevación para comunicar que flota sobre el contenido.
+- Usá el menú desplegable (FAB + ListMenu) para 2+ acciones rápidas.
+
+#### 🚫 Don'ts
+- No pongas varios FAB compitiendo en una misma vista.
+- No lo uses para acciones secundarias o destructivas.
+- No quites la sombra: sin elevación deja de leerse como flotante.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     variant: { control: 'select', options: ['primary', 'secondary'] },
