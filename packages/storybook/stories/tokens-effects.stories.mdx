@@ -1,0 +1,32 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Tokens/Effects" />
+
+# Effects & Animations
+
+McDonald's Dashboard uses consistent shadows, borders, and animations for depth and feedback.
+
+## Elevation Shadows
+
+### Raised Down
+- Shadow: `0px 2px 8px rgba(0, 0, 0, 0.12)`
+- Usage: Cards, dropdowns
+- Effect: Subtle elevation
+
+### Raised Up
+- Shadow: `0px -2px 8px rgba(0, 0, 0, 0.12)`
+- Usage: Floating elements, tooltips
+
+### Floating
+- Shadow: `0px 8px 24px rgba(0, 0, 0, 0.16)`
+- Usage: Modals, dialogs
+
+## Animation Timings
+
+| Duration | Time | Use Case |
+|----------|------|----------|
+| Short | 150ms | Hover states, quick feedback |
+| Standard | 300ms | Normal transitions, modal open/close |
+| Long | 500ms | Complex animations, page transitions |
+
+All animations use easing: `cubic-bezier(0.4, 0, 0.2, 1)`
