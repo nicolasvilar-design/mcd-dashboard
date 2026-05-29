@@ -1,0 +1,20 @@
+{
+  "name": "mcd-dashboard",
+  "version": "0.1.0",
+  "description": "McDonald's Dashboard — Component Library + Storybook + Design System",
+  "private": true,
+  "workspaces": [
+    "packages/components",
+    "packages/tokens",
+    "packages/storybook"
+  ],
+  "scripts": {
+    "storybook": "npm run -w packages/storybook storybook",
+    "build-storybook": "npm run -w packages/storybook build-storybook",
+    "build": "npm run -w packages/components build && npm run -w packages/tokens build",
+    "dev": "npm run -w packages/components dev & npm run -w packages/storybook storybook"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

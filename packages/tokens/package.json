@@ -1,0 +1,23 @@
+{
+  "name": "@mcd-dashboard/tokens",
+  "version": "0.1.0",
+  "description": "McDonald's Dashboard — Design Tokens (Colors, Spacing, Typography, etc.)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./colors": "./dist/tokens/colors.json",
+    "./spacing": "./dist/tokens/spacing.json",
+    "./typography": "./dist/tokens/typography.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "echo 'Build script placeholder'"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "@mcd-dashboard/components",
+  "version": "0.1.0",
+  "description": "McDonald's Dashboard — React/Vue Components",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "echo 'Build script placeholder'",
+    "dev": "echo 'Dev script placeholder'"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}
