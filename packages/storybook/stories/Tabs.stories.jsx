@@ -1,66 +1,49 @@
 import React, { useState } from 'react';
 
-const Tabs = ({ tabs = [], isDarkMode = false }) => {
-  const [activeTab, setActiveTab] = useState(0);
+/**
+ * Tabs — pixel-perfect from Figma (node 797:4187)
+ * Underline tabs: Active = bold text + 2px #292929 bottom border (NOT a gold fill).
+ * Item states: enabled, hovered (#d6d6d6), focused (#d6d6d6 + ring), pressed, active, disabled.
+ * Includes Segmented button variant (grouped pill buttons).
+ */
 
-  const modes = {
-    light: {
-      inactiveBg: 'transparent',
-      inactiveText: '#757575',
-      activeBg: '#FFBC0D',
-      activeText: '#292929',
-      borderColor: '#D6D6D6',
-      contentBg: '#FFFFFF',
-      contentText: '#292929',
-    },
-    dark: {
-      inactiveBg: 'transparent',
-      inactiveText: '#ADADAD',
-      activeBg: '#FFBC0D',
-      activeText: '#292929',
-      borderColor: '#4B4B4B',
-      contentBg: '#2A2A2A',
-      contentText: '#FFFFFF',
-    },
-  };
+const FONT = 'Speedee, system-ui, sans-serif';
 
-  const mode = isDarkMode ? 'dark' : 'light';
-  const colors = modes[mode];
-
-  return React.createElement(
-    'div',
-    { style: { width: '100%' } },
-    React.createElement(
-      'div',
-      { style: { display: 'flex', borderBottom: `2px solid ${colors.borderColor}` } },
-      tabs.map((tab, index) =>
-        React.createElement(
-          'button',
-          {
-            key: index,
-            onClick: () => setActiveTab(index),
-            style: {
-              padding: '12px 24px',
-              backgroundColor: activeTab === index ? colors.activeBg : colors.inactiveBg,
-              color: activeTab === index ? colors.activeText : colors.inactiveText,
-              border: 'none',
-              cursor: 'pointer',
-              fontWeight: activeTab === index ? '600' : '500',
-              fontSize: '14px',
-              fontFamily: 'Segoe UI, system-ui, sans-serif',
-              transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-              borderRadius: activeTab === index ? '4px 4px 0 0' : '0',
-            },
+const Tabs = ({ tabs = [], defaultIndex = 0 }) => {
+  const [active, setActive] = useState(defaultIndex);
+  return React.createElement('div', { style: { width: '100%' } },
+    React.createElement('div', { style: { display: 'flex', borderBottom: '1px solid #d6d6d6' } },
+      ...tabs.map((t, i) => {
+        const isActive = i === active;
+        return React.createElement('button', {
+          key: i, onClick: () => !t.disabled && setActive(i), disabled: t.disabled,
+          style: {
+            padding: '12px 16px', background: 'none', border: 'none',
+            borderBottom: isActive ? '2px solid #292929' : '2px solid transparent',
+            marginBottom: '-1px', cursor: t.disabled ? 'not-allowed' : 'pointer',
+            fontFamily: FONT, fontSize: '14px', letterSpacing: '-0.15px',
+            fontWeight: isActive ? 700 : 400,
+            color: t.disabled ? '#adadad' : (isActive ? '#292929' : '#6f6f6f'),
+            transition: 'all 150ms cubic-bezier(0.4,0,0.2,1)',
           },
-          tab.label
-        )
-      )
+        }, t.label);
+      })
     ),
-    React.createElement(
-      'div',
-      { style: { padding: '24px', backgroundColor: colors.contentBg, color: colors.contentText, minHeight: '200px' } },
-      tabs[activeTab]?.content
-    )
+    React.createElement('div', { style: { padding: '24px 16px', fontFamily: FONT, fontSize: '14px', color: '#292929' } }, tabs[active]?.content)
+  );
+};
+
+const SegmentedButton = ({ options = [], defaultIndex = 0 }) => {
+  const [active, setActive] = useState(defaultIndex);
+  return React.createElement('div', { style: { display: 'inline-flex', border: '1px solid #292929', borderRadius: '4px', overflow: 'hidden' } },
+    ...options.map((o, i) => React.createElement('button', {
+      key: i, onClick: () => setActive(i),
+      style: {
+        padding: '8px 16px', border: 'none', borderLeft: i ? '1px solid #292929' : 'none',
+        backgroundColor: i === active ? '#d6d6d6' : '#ffffff', color: '#292929',
+        fontFamily: FONT, fontSize: '14px', fontWeight: i === active ? 700 : 400, letterSpacing: '-0.15px', cursor: 'pointer',
+      },
+    }, o))
   );
 };
 
@@ -69,42 +52,25 @@ export default {
   component: Tabs,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
-  argTypes: {
-    isDarkMode: { control: 'boolean' },
-  },
 };
 
-const sampleTabs = [
-  { label: 'Tab 1', content: 'Content for the first tab. This is where you can place your content.' },
-  { label: 'Tab 2', content: 'Content for the second tab. Different information here.' },
-  { label: 'Tab 3', content: 'Content for the third tab. Another section of content.' },
+const sample = [
+  { label: 'Menu item', content: 'Contenido del primer tab.' },
+  { label: 'Menu item', content: 'Contenido del segundo tab.' },
+  { label: 'Menu item', content: 'Contenido del tercer tab.' },
 ];
 
-export const Default = {
-  args: { tabs: sampleTabs },
+export const Default = { render: () => React.createElement(Tabs, { tabs: sample }) };
+
+export const WithDisabled = {
+  render: () => React.createElement(Tabs, { tabs: [...sample, { label: 'Menu item', content: '', disabled: true }] }),
 };
 
-export const DarkMode = {
-  args: { tabs: sampleTabs, isDarkMode: true },
-  parameters: { backgrounds: { default: 'dark' } },
-};
-
-export const AllStates = {
-  render: () =>
-    React.createElement(
-      'div',
-      { style: { padding: '40px', fontFamily: 'system-ui', display: 'flex', flexDirection: 'column', gap: '48px' } },
-      React.createElement(
-        'div',
-        null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Light Mode'),
-        React.createElement(Tabs, { tabs: sampleTabs })
-      ),
-      React.createElement(
-        'div',
-        { style: { backgroundColor: '#1A1A1A', padding: '32px', borderRadius: '8px' } },
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' } }, 'Dark Mode'),
-        React.createElement(Tabs, { tabs: sampleTabs, isDarkMode: true })
-      )
-    ),
+export const Segmented = {
+  render: () => React.createElement('div', { style: { padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', fontFamily: FONT } },
+    React.createElement('h3', { style: { margin: 0, fontSize: '14px', color: '#6f6f6f' } }, 'Segmented button'),
+    React.createElement(SegmentedButton, { options: ['Label', 'Label'] }),
+    React.createElement(SegmentedButton, { options: ['Label', 'Label', 'Label'] }),
+    React.createElement(SegmentedButton, { options: ['Label', 'Label', 'Label', 'Label'] })
+  ),
 };
