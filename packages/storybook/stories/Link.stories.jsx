@@ -42,7 +42,19 @@ const Link = ({ label = 'Label', variant = 'back', disabled = false, href = '#',
 export default {
   title: 'Components/Link',
   component: Link,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component:
+`Enlace. Back-link (← Label, \`#292929\`) para volver; inline azul \`#0f62fe\` para links en texto; external con ↗.
+
+#### ✅ Do's
+- Back-link para navegación "atrás"; inline para referencias en contenido.
+- External abre en pestaña nueva con indicador ↗.
+
+#### 🚫 Don'ts
+- No uses link para acciones destructivas o primarias (usá Button).
+- No subrayes permanentemente si rompe la lectura del texto.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     variant: { control: 'select', options: ['back', 'inline', 'external'] },

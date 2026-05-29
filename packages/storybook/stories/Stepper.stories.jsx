@@ -56,7 +56,19 @@ const Stepper = ({ steps = [] }) =>
 export default {
   title: 'Components/Progress Indicator (Stepper)',
   component: Stepper,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Indicador de progreso multi-paso. Estados: pending (dotted), active/complete (gold + ✓), error (rojo + !). Conector gold al avanzar.
+
+#### ✅ Do's
+- Usalo para flujos lineales y secuenciales (checkout, onboarding).
+- Mostrá claramente el paso actual y los completados.
+
+#### 🚫 Don'ts
+- No lo uses para navegación libre no secuencial.
+- No muestres más de ~6 pasos a la vez.` } },
+  },
   tags: ['autodocs'],
 };
 

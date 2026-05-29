@@ -1,4 +1,7 @@
 import React from 'react';
+import { injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * UI Shell — Header · pixel-perfect from Figma (node 638:4240)
@@ -33,7 +36,7 @@ const Avatar = ({ initials = 'RA' }) =>
   }, initials);
 
 const IconBtn = (node) =>
-  React.createElement('button', { style: { background: 'none', border: 'none', cursor: 'pointer', padding: '6px', display: 'flex', alignItems: 'center' } }, node);
+  React.createElement('button', { className: 'mcd-pressable', style: { background: 'none', border: 'none', cursor: 'pointer', padding: '6px', display: 'flex', alignItems: 'center', borderRadius: '8px' } }, node);
 
 const Header = ({ selectorLabel = 'Selecciona', collapsed = false }) =>
   React.createElement('div', {
@@ -67,7 +70,19 @@ const Header = ({ selectorLabel = 'Selecciona', collapsed = false }) =>
 export default {
   title: 'Components/UI Shell — Header',
   component: Header,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    layout: 'fullscreen',
+    docs: { description: { component:
+`Barra superior del dashboard: menú + logo + selector de contexto + iconos de acción + avatar. Altura 64px, borde inferior.
+
+#### ✅ Do's
+- Mantené el selector de mercado/restaurante a la izquierda y el avatar a la derecha.
+- Limitá los iconos de acción a los esenciales.
+
+#### 🚫 Don'ts
+- No sobrecargues con iconos.
+- No muevas el avatar de la esquina derecha.` } },
+  },
   tags: ['autodocs'],
   argTypes: { selectorLabel: { control: 'text' } },
 };

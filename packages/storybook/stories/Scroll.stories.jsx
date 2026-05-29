@@ -41,7 +41,19 @@ const Scroll = ({ direction = 'vertical' }) => {
 export default {
   title: 'Components/Scroll',
   component: Scroll,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Scrollbar custom fino para contenido que supera el viewport (vertical / horizontal). Thumb \`#d6d6d6\` redondeado.
+
+#### ✅ Do's
+- Usalo cuando el contenido excede el contenedor; mantené el thumb visible.
+- Preferí scroll vertical; el horizontal con indicio claro.
+
+#### 🚫 Don'ts
+- No ocultes del todo el scrollbar (perjudica la descubribilidad).
+- No fuerces scroll horizontal sin necesidad.` } },
+  },
   tags: ['autodocs'],
   argTypes: { direction: { control: 'select', options: ['vertical', 'horizontal'] } },
 };

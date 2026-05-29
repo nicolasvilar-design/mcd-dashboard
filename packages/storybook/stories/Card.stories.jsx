@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { EASING, DURATION, injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Card (Card_list) — pixel-perfect from Figma (node 4298:13547)
@@ -24,8 +27,9 @@ const Toggle = ({ on: onProp }) => {
   const [on, setOn] = useState(onProp);
   return React.createElement('button', {
     onClick: () => setOn((o) => !o),
-    style: { width: '40px', height: '22px', borderRadius: '22px', backgroundColor: on ? '#ffbc0d' : '#adadad', border: 'none', position: 'relative', cursor: 'pointer', flexShrink: 0, padding: 0 },
-  }, React.createElement('span', { style: { position: 'absolute', top: '2px', left: on ? '20px' : '2px', width: '18px', height: '18px', borderRadius: '50%', backgroundColor: '#fff', transition: 'left 150ms', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' } }));
+    className: 'mcd-pressable',
+    style: { width: '40px', height: '22px', borderRadius: '22px', backgroundColor: on ? '#ffbc0d' : '#adadad', border: 'none', position: 'relative', cursor: 'pointer', flexShrink: 0, padding: 0, transition: `background-color ${DURATION.press}ms ${EASING.out}` },
+  }, React.createElement('span', { style: { position: 'absolute', top: '2px', left: '2px', width: '18px', height: '18px', borderRadius: '50%', backgroundColor: '#fff', transform: `translateX(${on ? 18 : 0}px)`, transition: `transform ${DURATION.dropdown}ms ${EASING.out}`, boxShadow: '0 1px 3px rgba(0,0,0,0.2)' } }));
 };
 
 const Kebab = () => React.createElement('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: '#6f6f6f' },
@@ -55,14 +59,26 @@ const CardListItem = ({ title = 'PEDIDO/ESTADO/V N°', code = 'Código: MCD-0000
     React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: '16px' } },
       React.createElement('span', { style: { fontSize: '12px', color: linkColor, fontWeight: 700 } }, linkText),
       React.createElement(Toggle, { on: toggleOn }),
-      React.createElement('button', { style: { background: 'none', border: 'none', cursor: 'pointer', padding: 0 } }, React.createElement(Kebab))
+      React.createElement('button', { className: 'mcd-pressable', style: { background: 'none', border: 'none', cursor: 'pointer', padding: 0 } }, React.createElement(Kebab))
     )
   );
 
 export default {
   title: 'Components/Card (List)',
   component: CardListItem,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Card de gestión (Card_list): fila con título + código + Tag de estado + tipo + fechas + toggle + kebab.
+
+#### ✅ Do's
+- Mantené el color del estado consistente con el sistema de Tags.
+- Toggle para activar/desactivar; kebab para acciones secundarias.
+
+#### 🚫 Don'ts
+- No la satures de acciones visibles.
+- No la uses para contenido editorial (eso es otra card).` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     status: { control: 'select', options: ['pendiente', 'confirmado', 'cancelado'] },

@@ -59,7 +59,19 @@ const FileUploader = ({ state = 'enabled', supportingText, width = 328 }) => {
 export default {
   title: 'Components/File Uploader',
   component: FileUploader,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Zona de carga drag-and-drop. Estados: enabled/hover/focus/error/disabled, con link "sube un archivo".
+
+#### ✅ Do's
+- Indicá formatos y tamaños permitidos.
+- Mensaje de error específico (formato o tamaño no válido).
+
+#### 🚫 Don'ts
+- No ocultes las restricciones de archivo.
+- No lo uses para un input trivial de una línea.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     state: { control: 'select', options: ['enabled', 'hover', 'focus', 'error', 'disabled'] },

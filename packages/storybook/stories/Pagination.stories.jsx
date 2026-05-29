@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Pagination — pixel-perfect from Figma (node 787:27330)
@@ -45,6 +48,7 @@ const Pagination = ({ total = 61, defaultPerPage = 50 }) => {
 
   const arrow = (dir, dis, onClick) => React.createElement('button', {
     onClick: dis ? undefined : onClick, disabled: dis,
+    className: dis ? undefined : 'mcd-pressable',
     style: { background: 'none', border: 'none', cursor: dis ? 'not-allowed' : 'pointer', color: dis ? '#adadad' : '#292929', fontSize: '18px', padding: '4px 8px' },
   }, dir === 'prev' ? '‹' : '›');
 
@@ -63,7 +67,19 @@ const Pagination = ({ total = 61, defaultPerPage = 50 }) => {
 export default {
   title: 'Components/Pagination',
   component: Pagination,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Control de paginación de tablas: "Item por página" (select) + rango X–Y de Z + ‹ ›.
+
+#### ✅ Do's
+- Deshabilitá ‹ en la primera página y › en la última.
+- Mantené visible el total de resultados.
+
+#### 🚫 Don'ts
+- No la uses como lista numerada de muchas páginas.
+- No escondas el selector de items por página.` } },
+  },
   tags: ['autodocs'],
   argTypes: { total: { control: 'number' }, defaultPerPage: { control: 'number' } },
 };

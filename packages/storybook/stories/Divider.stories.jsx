@@ -60,7 +60,19 @@ const Divider = ({
 export default {
   title: 'Components/Divider',
   component: Divider,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Hr / línea divisora (\`#d6d6d6\`). Horizontal (fill width) o vertical (fill height) para separar contenidos dentro de un frame.
+
+#### ✅ Do's
+- Usalo para separar grupos de contenido relacionados dentro de un frame.
+- Preferí solid; agregá label solo si aporta ("OR").
+
+#### 🚫 Don'ts
+- No abuses: muchas veces el espaciado separa mejor que una línea.
+- No uses dashed/dotted salvo necesidad puntual.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     orientation: { control: 'select', options: ['horizontal', 'vertical'] },

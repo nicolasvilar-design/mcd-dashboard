@@ -92,7 +92,19 @@ const DataTable = () =>
 export default {
   title: 'Components/Data Table (Read-only)',
   component: DataTable,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Tabla de solo lectura para grandes volúmenes. Header con sort, Tags de color para estado, acciones en kebab, paginación en footer.
+
+#### ✅ Do's
+- Usá Tags de color para method/type/status (lectura rápida).
+- Acciones secundarias dentro del kebab; paginación en el footer.
+
+#### 🚫 Don'ts
+- No metas acciones primarias en cada fila.
+- No la uses para edición inline (es read-only).` } },
+  },
   tags: ['autodocs'],
 };
 

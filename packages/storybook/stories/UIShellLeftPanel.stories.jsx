@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { EASING, DURATION, injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * UI Shell — Left Panel / Sidebar · pixel-perfect from Figma (node 3812:3216)
@@ -28,6 +31,7 @@ const CategoryItem = ({ title, subitems = [], selected, defaultOpen = false, onS
         backgroundColor: selected ? '#f9f9f9' : (hover ? '#f9f9f9' : 'transparent'),
         borderLeft: `3px solid ${selected ? '#FFBC0D' : 'transparent'}`,
         fontFamily: FONT,
+        transition: `background-color ${DURATION.press}ms ${EASING.out}, border-color ${DURATION.press}ms ${EASING.out}`,
       },
     },
       React.createElement(Dot),
@@ -60,7 +64,19 @@ const Sidebar = () => {
 export default {
   title: 'Components/UI Shell — Left Panel',
   component: Sidebar,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Sidebar de navegación: categorías expandibles con subitems. El item activo lleva acento gold a la izquierda.
+
+#### ✅ Do's
+- Marcá siempre el item activo (acento gold + highlight).
+- Agrupá subitems bajo su categoría con chevron.
+
+#### 🚫 Don'ts
+- No anides más de 2 niveles.
+- No dejes la navegación sin indicador de ubicación actual.` } },
+  },
   tags: ['autodocs'],
 };
 

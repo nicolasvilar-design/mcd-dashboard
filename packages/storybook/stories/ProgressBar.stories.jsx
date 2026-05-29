@@ -45,7 +45,19 @@ const Spinner = ({ onDark = false }) => {
 export default {
   title: 'Components/Progress bar',
   component: ProgressBar,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Indicador de progreso lineal. Fill azul \`#0f62fe\`; success verde + ✓, error rojo + ✕. Spinner circular para indeterminado.
+
+#### ✅ Do's
+- Usá azul para progreso; verde/rojo solo para resultado final.
+- Acompañá con label y helper text cuando demore.
+
+#### 🚫 Don'ts
+- No uses gold (es el color de selección del sistema).
+- No uses keyframes reiniciables para progreso dinámico (usá transición de width lineal).` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     value: { control: { type: 'range', min: 0, max: 100 } },

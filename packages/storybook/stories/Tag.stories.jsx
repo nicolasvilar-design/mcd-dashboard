@@ -1,4 +1,7 @@
 import React from 'react';
+import { injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Tag — pixel-perfect from Figma (node 857:22446)
@@ -66,7 +69,7 @@ const Tag = ({
     },
     closable && React.createElement(
       'button',
-      { onClick: onClose, style: { background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' } },
+      { onClick: onClose, className: 'mcd-pressable', style: { background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' } },
       React.createElement(CloseIcon, { color: fg })
     ),
     showIcon && React.createElement(MIcon, { color: color === 'gold' ? '#DB0007' : fg, size: 16 }),
@@ -77,7 +80,19 @@ const Tag = ({
 export default {
   title: 'Components/Tag',
   component: Tag,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component:
+`Etiqueta de estado/categoría. Fill (énfasis) / Outline (sutil), color tags semánticos, variante closable (operations).
+
+#### ✅ Do's
+- Usá color tags para estados (verde=ok, rojo=error, etc.).
+- Closable solo cuando el tag representa un filtro removible.
+
+#### 🚫 Don'ts
+- No uses tags como botones de acción.
+- No abuses de los colores: pierden significado.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     fill: { control: 'select', options: ['fill', 'outline'] },

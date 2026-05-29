@@ -53,7 +53,19 @@ const Accordion = ({ items = [] }) =>
 export default {
   title: 'Components/Accordion',
   component: Accordion,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Divulgación progresiva: título + contenido expandible con chevron.
+
+#### ✅ Do's
+- Agrupá contenido secundario que el usuario expande bajo demanda.
+- Mantené el chevron como indicador claro de estado (rota al abrir).
+
+#### 🚫 Don'ts
+- No escondas contenido crítico que siempre debe verse.
+- No anides accordions en profundidad.` } },
+  },
   tags: ['autodocs'],
 };
 

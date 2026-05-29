@@ -101,7 +101,19 @@ const Legend = () =>
 export default {
   title: 'Components/Calendar',
   component: Calendar,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Vista mensual de eventos. Color por estado: verde=confirmado, amarillo=pendiente, rojo=cancelado. Marca de "hoy" y overflow "Ver N más".
+
+#### ✅ Do's
+- Limitá a 2 eventos visibles por día y colapsá el resto en "Ver N más".
+- Mantené la leyenda de colores visible.
+
+#### 🚫 Don'ts
+- No la uses para elegir una fecha simple (usá DatePicker).
+- No satures las celdas sin overflow.` } },
+  },
   tags: ['autodocs'],
 };
 
