@@ -1,0 +1,91 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundations/Effects & Animations" />
+
+# Effects & Animations
+
+McDonald's Dashboard uses consistent shadows, borders, and animations to create depth and feedback.
+
+## Elevation Shadows
+
+Shadows create visual hierarchy and indicate elevation/depth.
+
+### Raised Down
+- **Usage:** Cards, dropdowns, elevated surfaces
+- **Shadow:** `0px 2px 8px rgba(0, 0, 0, 0.12)`
+- **Effect:** Subtle elevation below the surface
+
+### Raised Up
+- **Usage:** Floating elements, tooltips
+- **Shadow:** `0px -2px 8px rgba(0, 0, 0, 0.12)`
+- **Effect:** Subtle elevation above the surface
+
+### Floating
+- **Usage:** Modals, dialogs, popovers
+- **Shadow:** `0px 8px 24px rgba(0, 0, 0, 0.16)`
+- **Effect:** Prominent elevation, modal prominence
+
+## Border Effects
+
+### Bordered Down
+- **Width:** 1px solid
+- **Position:** Bottom only
+- **Usage:** Tab active states, underlines
+- **Color:** Use primary text color
+
+### Bordered All
+- **Width:** 1px solid
+- **Usage:** Card borders, input fields, panels
+- **Color:** Use neutral medium-gray
+
+## Animation Timings
+
+Smooth transitions and animations improve perceived performance.
+
+### Short Duration
+- **Duration:** 150ms
+- **Easing:** `cubic-bezier(0.4, 0, 0.2, 1)` (Material Design)
+- **Usage:** Hover states, quick feedback
+- **Example:** Button hover, icon transition
+
+### Standard Duration
+- **Duration:** 300ms
+- **Easing:** `cubic-bezier(0.4, 0, 0.2, 1)`
+- **Usage:** Normal transitions, modal open/close
+- **Example:** Dropdown expand, sidebar open
+
+### Long Duration
+- **Duration:** 500ms
+- **Easing:** `cubic-bezier(0.4, 0, 0.2, 1)`
+- **Usage:** Complex animations, page transitions
+
+## Usage Examples
+
+### Shadow Application
+```css
+/* Card element */
+box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.12);
+
+/* Modal element */
+box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.16);
+```
+
+### Animation Application
+```css
+/* Button hover (short duration) */
+transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+/* Modal open (standard duration) */
+transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+```
+
+## Accessibility Considerations
+
+- Respect `prefers-reduced-motion` media query for animations
+- Use animations for feedback, not distraction
+- Ensure transitions don't block user interaction
+- Test animations on low-end devices
+
+---
+
+**Note:** Effects should enhance the user experience without creating distraction or accessibility issues.

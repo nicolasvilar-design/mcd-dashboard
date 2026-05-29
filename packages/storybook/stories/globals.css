@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* McDonald's Brand Fonts */
+@font-face {
+  font-family: 'Speedee';
+  src: local('Speedee'), local('Speedee-Regular');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Speedee';
+  src: local('Speedee-Bold');
+  font-weight: 600;
+}
+
+/* Base styles */
+body {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #292929;
+  background-color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Speedee', sans-serif;
+}

@@ -15,6 +15,10 @@
     "dev": "npm run -w packages/components dev & npm run -w packages/storybook storybook"
   },
   "devDependencies": {
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.15",
+    "postcss-loader": "^8.2.1",
+    "tailwindcss": "^4.3.0",
     "typescript": "^5.3.0"
   }
 }
