@@ -9,17 +9,22 @@ export default {
 
 export const ColorPalette = () => {
   const colors = [
-    { name: 'McDonald\'s Black', hex: '#292929', usage: 'Primary text, UI elements' },
-    { name: 'McDonald\'s Red', hex: '#DA291C', usage: 'Primary actions, brand' },
-    { name: 'McDonald\'s Green', hex: '#1F6437', usage: 'Success states' },
-    { name: 'White', hex: '#FFFFFF', usage: 'Default background' },
-    { name: 'Light Gray', hex: '#F5F5F5', usage: 'Subtle backgrounds' },
-    { name: 'Medium Gray', hex: '#E8E8E8', usage: 'Borders, dividers' },
-    { name: 'Dark Gray', hex: '#757575', usage: 'Secondary text' },
-    { name: 'Success Green', hex: '#4CAF50', usage: 'Positive feedback' },
-    { name: 'Warning Yellow', hex: '#FFC107', usage: 'Cautionary feedback' },
-    { name: 'Error Red', hex: '#F44336', usage: 'Error feedback' },
-    { name: 'Info Blue', hex: '#2196F3', usage: 'Informational feedback' },
+    // Primary Brand Colors
+    { name: 'McDonald\'s Yellow', hex: '#FFC600', usage: 'Primary actions, brand', category: 'PRIMARY' },
+    { name: 'McDonald\'s Black', hex: '#292929', usage: 'Primary text, UI elements', category: 'PRIMARY' },
+    { name: 'McDonald\'s Red', hex: '#DA291C', usage: 'Secondary brand accent', category: 'PRIMARY' },
+
+    // Semantic Colors
+    { name: 'Success Green', hex: '#4CAF50', usage: 'Positive feedback', category: 'SEMANTIC' },
+    { name: 'Warning Yellow', hex: '#FFC107', usage: 'Cautionary feedback', category: 'SEMANTIC' },
+    { name: 'Error Red', hex: '#F44336', usage: 'Error feedback', category: 'SEMANTIC' },
+    { name: 'Info Blue', hex: '#2196F3', usage: 'Informational feedback', category: 'SEMANTIC' },
+
+    // Neutral Colors
+    { name: 'White', hex: '#FFFFFF', usage: 'Default background', category: 'NEUTRAL' },
+    { name: 'Light Gray', hex: '#F5F5F5', usage: 'Subtle backgrounds', category: 'NEUTRAL' },
+    { name: 'Medium Gray', hex: '#E8E8E8', usage: 'Borders, dividers', category: 'NEUTRAL' },
+    { name: 'Dark Gray', hex: '#757575', usage: 'Secondary text', category: 'NEUTRAL' },
   ];
 
   return React.createElement(

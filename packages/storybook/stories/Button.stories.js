@@ -10,8 +10,8 @@ const Button = ({
   // Inline styles for variants
   const variantStyles = {
     primary: {
-      backgroundColor: '#DA291C',
-      color: 'white',
+      backgroundColor: '#FFC600',
+      color: '#292929',
     },
     secondary: {
       backgroundColor: '#E8E8E8',
