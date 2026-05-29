@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Date Picker — pixel-perfect from Figma (node 4298:13516)
@@ -77,7 +80,8 @@ const DatePicker = ({ label = 'Label' }) => {
       React.createElement(CalIcon)
     ),
     open && React.createElement('div', {
-      style: { marginTop: '8px', border: '1px solid #d6d6d6', borderRadius: '8px', padding: '12px', boxShadow: '0px 8px 16px rgba(41,41,41,0.16)', backgroundColor: '#FFFFFF', display: 'inline-block' },
+      className: 'mcd-enter',
+      style: { '--mcd-origin': 'top center', marginTop: '8px', border: '1px solid #d6d6d6', borderRadius: '8px', padding: '12px', boxShadow: '0px 8px 16px rgba(41,41,41,0.16)', backgroundColor: '#FFFFFF', display: 'inline-block' },
     },
       React.createElement(MonthGrid, { title: 'Enero de 2020', offset: 2, days: 31, selected, onSelect: setSelected }),
       React.createElement('div', { style: { display: 'flex', justifyContent: 'flex-end', marginTop: '12px' } }, React.createElement(GoldButton, null, 'Guardar'))

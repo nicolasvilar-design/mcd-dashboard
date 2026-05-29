@@ -117,7 +117,20 @@ const TextField = ({
 export default {
   title: 'Components/TextField',
   component: TextField,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Campo de texto de una línea. Estilo *filled* (\`#f9f9f9\`, radio 4px, Speedee 14/16). 9 estados: default, hover, focus, pressed, active-typing, complete, error, success, disabled. Slots de icono izq/der, badge de cantidad y supporting text. Para multilínea usá **TextField/Text Area**.
+
+#### ✅ Do's
+- Label siempre visible arriba; placeholder como ejemplo, no como label.
+- Supporting text en rojo (\`#db0007\`) para error; verde para success.
+- Icono izquierdo para contexto (buscar), derecho para acción (limpiar).
+
+#### 🚫 Don'ts
+- No uses el placeholder como única etiqueta (desaparece al escribir).
+- No deshabilites por validación — mostrá el error y guiá.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     state: { control: 'select', options: ['default', 'hovered', 'focused', 'pressed', 'typing', 'complete', 'error', 'success', 'disabled'] },

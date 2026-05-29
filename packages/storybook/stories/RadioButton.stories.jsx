@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { EASING, DURATION, injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Radio Button — pixel-perfect from Figma (node 5644:4541)
@@ -22,11 +25,13 @@ const Radio = ({ label = 'Radiobutton label', selected = false, state = 'default
   if (focused) border = '2px solid #0f62fe';
 
   const circle = React.createElement('span', {
-    style: { width: '20px', height: '20px', borderRadius: '50%', backgroundColor: bg, border, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', flexShrink: 0 },
+    style: { width: '20px', height: '20px', borderRadius: '50%', backgroundColor: bg, border, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', flexShrink: 0,
+      transition: `background-color ${DURATION.press}ms ${EASING.out}, border-color ${DURATION.press}ms ${EASING.out}` },
   }, selected && !disabled && React.createElement(Check));
 
   const row = React.createElement('label', {
     onClick: () => !disabled && onSelect && onSelect(value),
+    className: disabled ? undefined : 'mcd-pressable',
     style: { display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: disabled ? 'not-allowed' : 'pointer' },
   },
     circle,
@@ -44,7 +49,19 @@ const Radio = ({ label = 'Radiobutton label', selected = false, state = 'default
 export default {
   title: 'Components/Radio Button',
   component: Radio,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component:
+`Selección única dentro de un grupo. Selected = círculo gold \`#ffbc0d\` + checkmark + label bold.
+
+#### ✅ Do's
+- Usalo para elegir UNA opción de una lista corta (2–6).
+- Agrupá con un \`name\` común para selección excluyente.
+
+#### 🚫 Don'ts
+- No lo uses para selección múltiple (usá Checkbox).
+- No dejes un grupo sin opción por defecto si siempre debe haber una elegida.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     selected: { control: 'boolean' },

@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { EASING, DURATION, injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Checkbox — pixel-perfect from Figma (node 4298:13515)
@@ -26,10 +29,12 @@ const Checkbox = ({ label = 'Checkbox label', checked = false, state = 'enabled'
 
   return React.createElement('label', {
     onClick: handle,
+    className: disabled ? undefined : 'mcd-pressable',
     style: { display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: disabled ? 'not-allowed' : 'pointer' },
   },
     React.createElement('span', {
-      style: { width: '20px', height: '20px', borderRadius: '4px', backgroundColor: bg, border, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', flexShrink: 0 },
+      style: { width: '20px', height: '20px', borderRadius: '4px', backgroundColor: bg, border, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', flexShrink: 0,
+        transition: `background-color ${DURATION.press}ms ${EASING.out}, border-color ${DURATION.press}ms ${EASING.out}` },
     }, value && !disabled && React.createElement(Check)),
     React.createElement('span', {
       style: { fontFamily: FONT, fontSize: '14px', letterSpacing: '-0.15px', color: disabled ? '#adadad' : '#292929', fontWeight: value ? 700 : 400 },
@@ -40,7 +45,19 @@ const Checkbox = ({ label = 'Checkbox label', checked = false, state = 'enabled'
 export default {
   title: 'Components/Checkbox',
   component: Checkbox,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component:
+`Casilla de selección múltiple. Checked = gold \`#ffbc0d\` + check negro + label bold.
+
+#### ✅ Do's
+- Usalo cuando se pueden elegir varias opciones de una lista.
+- Mostrá el label en bold al estar marcado (refuerza el estado).
+
+#### 🚫 Don'ts
+- No lo uses para selección única (usá Radio Button).
+- No uses verde/azul para el check — el color del sistema es gold.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     checked: { control: 'boolean' },

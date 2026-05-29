@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { EASING, DURATION, injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Toggle — pixel-perfect from Figma (node 3124:6300)
@@ -48,9 +51,12 @@ const Toggle = ({ on: onProp = false, state = 'enabled', label, interactive = fa
   },
     React.createElement('span', {
       style: {
-        position: 'absolute', top: '50%', left: value ? `${TRACK_W - THUMB - 2}px` : '2px',
-        transform: 'translateY(-50%)', width: `${THUMB}px`, height: `${THUMB}px`, borderRadius: '50%',
-        backgroundColor: disabled ? '#f9f9f9' : '#ffffff', transition: 'left 150ms cubic-bezier(0.4,0,0.2,1)',
+        position: 'absolute', top: '50%', left: '2px',
+        // Animate transform (GPU), not `left` (layout). Strong ease-out.
+        transform: `translateY(-50%) translateX(${value ? TRACK_W - THUMB - 4 : 0}px)`,
+        width: `${THUMB}px`, height: `${THUMB}px`, borderRadius: '50%',
+        backgroundColor: disabled ? '#f9f9f9' : '#ffffff',
+        transition: `transform ${DURATION.dropdown}ms ${EASING.out}`,
         boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
       },
     })
@@ -66,7 +72,21 @@ const Toggle = ({ on: onProp = false, state = 'enabled', label, interactive = fa
 export default {
   title: 'Components/Toggle',
   component: Toggle,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component:
+`Interruptor on/off. ON = gold \`#ffbc0d\`, OFF = \`#adadad\`.
+
+**Microinteracción:** el thumb se desplaza con \`transform: translateX\` (GPU, no \`left\`) y ease-out fuerte.
+
+#### ✅ Do's
+- Usalo para acciones de efecto inmediato (encender/apagar un servicio).
+- Acompañalo con un label claro del estado ("Funcionalidad prendida").
+
+#### 🚫 Don'ts
+- No lo uses cuando se requiere "Guardar" para aplicar (usá Checkbox).
+- No uses verde para ON — el color de selección del sistema es gold.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     on: { control: 'boolean' },

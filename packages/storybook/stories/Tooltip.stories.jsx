@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { injectMotion } from './_motion';
+
+injectMotion();
+
+const ORIGIN = { top: 'bottom center', bottom: 'top center', left: 'right center', right: 'left center' };
 
 /**
  * Tooltip — pixel-perfect from Figma (node 2713:5222)
@@ -41,7 +46,9 @@ const Tooltip = ({ text = 'Tooltip', position = 'top', size = 'small', children,
     onMouseEnter: () => setShow(true), onMouseLeave: () => setShow(false) },
     children,
     visible && React.createElement('div', {
+      className: 'mcd-tip-enter',
       style: {
+        '--mcd-origin': ORIGIN[position],
         position: 'absolute', backgroundColor: BG, color: '#ffffff', borderRadius: '4px',
         padding: isBig ? '8px 12px' : '6px 10px', fontFamily: FONT, fontSize: '12px', lineHeight: '16px',
         letterSpacing: '-0.15px', whiteSpace: isBig ? 'normal' : 'nowrap', maxWidth: isBig ? '200px' : 'none',
@@ -60,7 +67,21 @@ const Anchor = (label = 'Hover me') =>
 export default {
   title: 'Components/Tooltip',
   component: Tooltip,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component:
+`Información contextual al hacer hover. Dark \`#292929\` + texto blanco + caret.
+
+**Microinteracción:** entra escalando desde el caret (origin-aware) con ease-out, 160ms.
+
+#### ✅ Do's
+- Texto breve; usá el tamaño *big* solo para explicaciones de varias líneas.
+- Posicioná a 4px del elemento, apuntando con el caret.
+
+#### 🚫 Don'ts
+- No metas información esencial solo en el tooltip (no accesible en touch).
+- No lo uses para contenido interactivo (usá Popover/Modal).` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     position: { control: 'select', options: ['top', 'bottom', 'left', 'right'] },

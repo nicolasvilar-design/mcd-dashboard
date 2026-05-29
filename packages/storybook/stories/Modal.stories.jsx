@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Modal — pixel-perfect from Figma (node 3124:6301)
@@ -21,9 +24,11 @@ const Modal = ({ title = 'Título', optionalText = 'Optional text', body, isOpen
   if (!isOpen) return null;
   const widths = { small: 360, medium: 460, large: 640 };
   return React.createElement('div', {
+    className: 'mcd-overlay-enter',
     style: { position: 'fixed', inset: 0, backgroundColor: 'rgba(41,41,41,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 },
   },
     React.createElement('div', {
+      className: 'mcd-modal-enter',
       style: { backgroundColor: '#fff', borderRadius: '8px', width: `${widths[size]}px`, maxWidth: '92vw', boxShadow: '0px 8px 16px rgba(41,41,41,0.16)', fontFamily: FONT, overflow: 'hidden' },
     },
       React.createElement('div', { style: { padding: '24px 24px 0 24px' } },
@@ -48,7 +53,21 @@ const Modal = ({ title = 'Título', optionalText = 'Optional text', body, isOpen
 export default {
   title: 'Components/Modal',
   component: Modal,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    layout: 'fullscreen',
+    docs: { description: { component:
+`Diálogo modal centrado con overlay. Header (eyebrow + título + X), body, footer (secundario + primario gold).
+
+**Microinteracción:** el modal escala desde el centro (NO origin-aware) + overlay con fade, ease-out.
+
+#### ✅ Do's
+- Reservalo para decisiones que requieren foco (confirmaciones, formularios cortos).
+- Acción primaria a la derecha; permití cerrar con X y click en overlay.
+
+#### 🚫 Don'ts
+- No anides modales ni metas flujos largos (usá una página).
+- No animes desde un trigger — los modales quedan centrados.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     isOpen: { control: 'boolean' },

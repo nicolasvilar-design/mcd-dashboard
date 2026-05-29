@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { injectMotion } from './_motion';
+
+injectMotion();
 
 /**
  * Dropdown — pixel-perfect from Figma (node 3124:6302)
@@ -41,7 +44,8 @@ const Dropdown = ({ label = 'Menu item', options = [], state = 'enabled', placeh
     ),
     error && React.createElement('span', { style: { fontSize: '12px', color: '#db0007', padding: '4px 8px', display: 'block' } }, 'Supporting text'),
     open && React.createElement('div', {
-      style: { position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '2px', backgroundColor: '#fff', border: '1px solid #d6d6d6', borderRadius: '4px', boxShadow: '0px 8px 16px rgba(41,41,41,0.16)', zIndex: 10, maxHeight: '240px', overflowY: 'auto' },
+      className: 'mcd-enter',
+      style: { '--mcd-origin': 'top center', position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '2px', backgroundColor: '#fff', border: '1px solid #d6d6d6', borderRadius: '4px', boxShadow: '0px 8px 16px rgba(41,41,41,0.16)', zIndex: 10, maxHeight: '240px', overflowY: 'auto' },
     },
       ...options.map((o, i) => React.createElement('div', {
         key: i, onClick: () => { setSelected(o); setOpen(false); },
@@ -56,7 +60,21 @@ const Dropdown = ({ label = 'Menu item', options = [], state = 'enabled', placeh
 export default {
   title: 'Components/Dropdown',
   component: Dropdown,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component:
+`Selector de una opción. Campo estilo underline + lista de opciones.
+
+**Microinteracción:** la lista entra origin-aware (escala desde el campo) con ease-out, 200ms.
+
+#### ✅ Do's
+- Usalo para 5+ opciones; para 2–4 considerá Radio o Segmented button.
+- Mostrá supporting text en rojo para el estado error.
+
+#### 🚫 Don'ts
+- No lo uses para acciones (es selección, no menú de comandos).
+- No abras la lista hacia arriba si hay espacio abajo.` } },
+  },
   tags: ['autodocs'],
   argTypes: {
     state: { control: 'select', options: ['enabled', 'hovered', 'focused', 'pressed', 'active', 'disabled', 'error', 'skeleton'] },
