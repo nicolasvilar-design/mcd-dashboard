@@ -1,301 +1,124 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Button = ({
-  variant = 'primary',
-  size = 'medium',
-  disabled = false,
-  children = 'Button',
-  onClick,
-  isDarkMode = false,
-}) => {
-  const [state, setState] = useState('enabled');
+/**
+ * Button — pixel-perfect from Figma (node 4298:13512)
+ *
+ * Exact tokens:
+ *   Primary:   enabled #ffbc0d · hover #ffd46a · pressed #c08800 · disabled #ffe49e · text #292929
+ *   Secondary: bg #ffffff · stroke #292929 · hover/focus #d6d6d6 · text #292929 · disabled #d6d6d6
+ *   Red:       enabled #db0007 · hover #ff161d · pressed #b20006 · disabled #ffe7e8 · text #ffffff
+ *   text-disabled #adadad · Font Label02 = Speedee Regular 14/16, -0.15px
+ *   Sizes (height): small 32 · medium 40 (Spaces/500) · large 48
+ */
 
-  // Color definitions from Figma
-  const colors = {
-    primary: {
-      light: {
-        enabled: '#FFBC0D',
-        hover: '#FFD46A',
-        focused: '#FFBC0D',
-        pressed: '#C08800',
-        disabled: '#FFE49E',
-        text: '#292929',
-        stroke: 'transparent',
-      },
-      dark: {
-        enabled: '#FFBC0D',
-        hover: '#FFD46A',
-        focused: '#FFBC0D',
-        pressed: '#C08800',
-        disabled: '#FFE49E',
-        text: '#292929',
-        stroke: 'transparent',
-      },
-    },
-    secondary: {
-      light: {
-        enabled: '#FFFFFF',
-        hover: '#D6D6D6',
-        focused: '#D6D6D6',
-        pressed: '#FFFFFF',
-        disabled: '#D6D6D6',
-        text: '#292929',
-        stroke: '#292929',
-      },
-      dark: {
-        enabled: '#4B4B4B',
-        hover: '#666666',
-        focused: '#4B4B4B',
-        pressed: '#4B4B4B',
-        disabled: '#D6D6D6',
-        text: '#FFFFFF',
-        stroke: '#FFFFFF',
-      },
-    },
-    delete: {
-      light: {
-        enabled: '#DB0007',
-        hover: '#FF161D',
-        focused: '#FF161D',
-        pressed: '#B20006',
-        disabled: '#FFE7E8',
-        text: '#FFFFFF',
-        stroke: '#292929',
-      },
-      dark: {
-        enabled: '#DB0007',
-        hover: '#FF161D',
-        focused: '#FF161D',
-        pressed: '#B20006',
-        disabled: '#FFE7E8',
-        text: '#FFFFFF',
-        stroke: '#FFFFFF',
-      },
-    },
-  };
+const FONT = 'Speedee, system-ui, sans-serif';
 
-  // Inline styles for sizes
-  const sizeStyles = {
-    small: { padding: '6px 12px', fontSize: '12px', height: '32px' },
-    medium: { padding: '8px 16px', fontSize: '14px', height: '40px' },
-    large: { padding: '12px 24px', fontSize: '16px', height: '48px' },
-  };
+const COLORS = {
+  primary: {
+    light: { enabled: '#ffbc0d', hovered: '#ffd46a', focused: '#ffbc0d', pressed: '#c08800', disabled: '#ffe49e', text: '#292929', stroke: 'transparent', focusStroke: '#292929' },
+    dark:  { enabled: '#ffbc0d', hovered: '#ffd46a', focused: '#ffbc0d', pressed: '#c08800', disabled: '#ffe49e', text: '#292929', stroke: 'transparent', focusStroke: '#ffffff' },
+  },
+  secondary: {
+    light: { enabled: '#ffffff', hovered: '#d6d6d6', focused: '#d6d6d6', pressed: '#ffffff', disabled: '#d6d6d6', text: '#292929', stroke: '#292929', focusStroke: '#292929' },
+    dark:  { enabled: '#4b4b4b', hovered: '#666666', focused: '#4b4b4b', pressed: '#4b4b4b', disabled: '#4b4b4b', text: '#ffffff', stroke: '#ffffff', focusStroke: '#ffffff' },
+  },
+  delete: {
+    light: { enabled: '#db0007', hovered: '#ff161d', focused: '#db0007', pressed: '#b20006', disabled: '#ffe7e8', text: '#ffffff', stroke: 'transparent', focusStroke: '#292929' },
+    dark:  { enabled: '#db0007', hovered: '#ff161d', focused: '#db0007', pressed: '#b20006', disabled: '#ffe7e8', text: '#ffffff', stroke: '#ffffff', focusStroke: '#ffffff' },
+  },
+};
 
+const SIZES = {
+  small:  { height: '32px', padding: '0 12px', fontSize: '14px' },
+  medium: { height: '40px', padding: '0 16px', fontSize: '14px' },
+  large:  { height: '48px', padding: '0 24px', fontSize: '16px' },
+};
+
+const Button = ({ variant = 'primary', size = 'medium', state = 'enabled', children = 'Label', isDarkMode = false }) => {
   const mode = isDarkMode ? 'dark' : 'light';
-  const colorSet = colors[variant][mode];
-  const currentColor = disabled ? colorSet.disabled : colorSet[state];
-  const textColor = disabled ? '#ADADAD' : colorSet.text;
+  const c = COLORS[variant][mode];
+  const sz = SIZES[size];
+  const disabled = state === 'disabled';
+  const bg = c[state];
+  const textColor = disabled ? '#adadad' : c.text;
 
-  // Base styles
-  const baseStyles = {
-    fontFamily: 'Speedee, system-ui, sans-serif',
-    fontWeight: '400',
-    borderRadius: '8px',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px',
-    backgroundColor: currentColor,
-    color: textColor,
-    border: colorSet.stroke === 'transparent' ? 'none' : `1px solid ${colorSet.stroke}`,
-    opacity: 1,
-    ...sizeStyles[size],
-  };
-
-  const handleMouseEnter = () => !disabled && setState('hovered');
-  const handleMouseLeave = () => setState('enabled');
-  const handleFocus = () => !disabled && setState('focused');
-  const handleBlur = () => setState('enabled');
-  const handleMouseDown = () => !disabled && setState('pressed');
-  const handleMouseUp = () => !disabled && setState('hovered');
+  // border: secondary always has stroke; focused state adds focus ring on all variants
+  let border = 'none';
+  if (c.stroke !== 'transparent') border = `1px solid ${c.stroke}`;
+  if (state === 'focused') border = `2px solid ${c.focusStroke}`;
 
   return React.createElement('button', {
-    style: baseStyles,
     disabled,
-    onClick,
-    onMouseEnter: handleMouseEnter,
-    onMouseLeave: handleMouseLeave,
-    onFocus: handleFocus,
-    onBlur: handleBlur,
-    onMouseDown: handleMouseDown,
-    onMouseUp: handleMouseUp,
+    style: {
+      height: sz.height, padding: sz.padding, fontSize: sz.fontSize,
+      fontFamily: FONT, fontWeight: 400, lineHeight: '16px', letterSpacing: '-0.15px',
+      backgroundColor: bg, color: textColor, border, borderRadius: '8px',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)', boxSizing: 'border-box',
+    },
   }, children);
 };
 
 export default {
   title: 'Components/Button',
   component: Button,
-  parameters: {
-    layout: 'centered',
-  },
+  parameters: { layout: 'centered' },
   tags: ['autodocs'],
   argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'delete'],
-    },
-    size: {
-      control: 'select',
-      options: ['small', 'medium', 'large'],
-    },
-    disabled: {
-      control: 'boolean',
-    },
-    isDarkMode: {
-      control: 'boolean',
-    },
-    children: {
-      control: 'text',
-    },
+    variant: { control: 'select', options: ['primary', 'secondary', 'delete'] },
+    size: { control: 'select', options: ['small', 'medium', 'large'] },
+    state: { control: 'select', options: ['enabled', 'hovered', 'focused', 'pressed', 'disabled'] },
+    isDarkMode: { control: 'boolean' },
+    children: { control: 'text' },
   },
 };
 
-export const Primary = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    children: 'Primary Button',
-  },
-};
+export const Primary = { args: { variant: 'primary', children: 'Label' } };
+export const Secondary = { args: { variant: 'secondary', children: 'Label' } };
+export const Delete = { args: { variant: 'delete', children: 'Label' } };
+export const Disabled = { args: { variant: 'primary', state: 'disabled', children: 'Label' } };
 
-export const Secondary = {
-  args: {
-    variant: 'secondary',
-    size: 'medium',
-    children: 'Secondary Button',
-  },
-};
+const STATES = ['enabled', 'hovered', 'focused', 'pressed', 'disabled'];
+const VARIANTS = [['Primary', 'primary'], ['Secondary', 'secondary'], ['Delete', 'delete']];
 
-export const Delete = {
-  args: {
-    variant: 'delete',
-    size: 'medium',
-    children: 'Delete',
-  },
-};
-
-export const Disabled = {
-  args: {
-    variant: 'primary',
-    size: 'medium',
-    disabled: true,
-    children: 'Disabled Button',
-  },
-};
+const Matrix = ({ isDarkMode }) =>
+  React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '90px repeat(3, 1fr)', gap: '16px', alignItems: 'center' } },
+    React.createElement('span', null),
+    ...VARIANTS.map(([label]) => React.createElement('span', { key: label, style: { fontSize: '13px', fontWeight: 700, color: isDarkMode ? '#fff' : '#292929', fontFamily: FONT } }, label)),
+    ...STATES.flatMap((st) => [
+      React.createElement('span', { key: `${st}-l`, style: { fontSize: '12px', color: isDarkMode ? '#adadad' : '#6f6f6f', fontFamily: FONT } }, st),
+      ...VARIANTS.map(([, v]) => React.createElement('div', { key: `${st}-${v}` }, React.createElement(Button, { variant: v, state: st, isDarkMode, children: 'Label' }))),
+    ])
+  );
 
 export const AllStates = {
-  render: () => {
-    return React.createElement('div', {
-      style: {
-        padding: '40px',
-        fontFamily: 'system-ui',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '48px',
-        maxWidth: '900px',
-      },
-    },
-      // Primary variant
-      React.createElement('div', null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Primary (Yellow)'),
-        React.createElement('p', { style: { margin: '0 0 16px 0', fontSize: '14px', color: '#757575' } }, 'enabled | hovered | focused | pressed | disabled'),
-        React.createElement('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap' } },
-          React.createElement(Button, { variant: 'primary', size: 'medium' }, 'Enabled'),
-          React.createElement('div', { style: { padding: '8px 16px', height: '40px', backgroundColor: '#FFD46A', borderRadius: '8px', display: 'flex', alignItems: 'center', fontSize: '14px' } }, 'Hovered'),
-          React.createElement('div', { style: { padding: '8px 16px', height: '40px', backgroundColor: '#FFBC0D', borderRadius: '8px', border: '1px solid #292929', display: 'flex', alignItems: 'center', fontSize: '14px' } }, 'Focused'),
-          React.createElement('div', { style: { padding: '8px 16px', height: '40px', backgroundColor: '#C08800', borderRadius: '8px', color: '#292929', display: 'flex', alignItems: 'center', fontSize: '14px' } }, 'Pressed'),
-          React.createElement(Button, { variant: 'primary', size: 'medium', disabled: true }, 'Disabled'),
-        ),
-      ),
-      // Secondary variant
-      React.createElement('div', null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Secondary (Gray)'),
-        React.createElement('p', { style: { margin: '0 0 16px 0', fontSize: '14px', color: '#757575' } }, 'enabled | hovered | focused | pressed | disabled'),
-        React.createElement('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap' } },
-          React.createElement(Button, { variant: 'secondary', size: 'medium' }, 'Enabled'),
-          React.createElement('div', { style: { padding: '8px 16px', height: '40px', backgroundColor: '#D6D6D6', borderRadius: '8px', color: '#292929', display: 'flex', alignItems: 'center', fontSize: '14px' } }, 'Hovered'),
-          React.createElement('div', { style: { padding: '8px 16px', height: '40px', backgroundColor: '#D6D6D6', borderRadius: '8px', border: '1px solid #292929', color: '#292929', display: 'flex', alignItems: 'center', fontSize: '14px' } }, 'Focused'),
-          React.createElement('div', { style: { padding: '8px 16px', height: '40px', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid #292929', color: '#292929', display: 'flex', alignItems: 'center', fontSize: '14px' } }, 'Pressed'),
-          React.createElement(Button, { variant: 'secondary', size: 'medium', disabled: true }, 'Disabled'),
-        ),
-      ),
-      // Delete variant
-      React.createElement('div', null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Delete (Red)'),
-        React.createElement('p', { style: { margin: '0 0 16px 0', fontSize: '14px', color: '#757575' } }, 'enabled | hovered | focused | pressed | disabled'),
-        React.createElement('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap' } },
-          React.createElement(Button, { variant: 'delete', size: 'medium' }, 'Enabled'),
-          React.createElement('div', { style: { padding: '8px 16px', height: '40px', backgroundColor: '#FF161D', borderRadius: '8px', color: '#FFFFFF', display: 'flex', alignItems: 'center', fontSize: '14px' } }, 'Hovered'),
-          React.createElement('div', { style: { padding: '8px 16px', height: '40px', backgroundColor: '#FF161D', borderRadius: '8px', border: '1px solid #292929', color: '#FFFFFF', display: 'flex', alignItems: 'center', fontSize: '14px' } }, 'Focused'),
-          React.createElement('div', { style: { padding: '8px 16px', height: '40px', backgroundColor: '#B20006', borderRadius: '8px', color: '#FFFFFF', display: 'flex', alignItems: 'center', fontSize: '14px' } }, 'Pressed'),
-          React.createElement(Button, { variant: 'delete', size: 'medium', disabled: true }, 'Disabled'),
-        ),
-      ),
-    );
-  },
+  render: () => React.createElement('div', { style: { padding: '40px', fontFamily: FONT } },
+    React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold' } }, 'Button — 3 variants × 5 states'),
+    React.createElement(Matrix, { isDarkMode: false })
+  ),
 };
 
 export const DarkMode = {
-  render: () => {
-    return React.createElement('div', {
-      style: {
-        padding: '40px',
-        fontFamily: 'system-ui',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '48px',
-        maxWidth: '900px',
-        backgroundColor: '#1A1A1A',
-        borderRadius: '8px',
-      },
-    },
-      React.createElement('div', null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' } }, 'Primary (Dark)'),
-        React.createElement('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap' } },
-          React.createElement(Button, { variant: 'primary', size: 'medium', isDarkMode: true }, 'Enabled'),
-          React.createElement(Button, { variant: 'primary', size: 'medium', isDarkMode: true, disabled: true }, 'Disabled'),
-        ),
-      ),
-      React.createElement('div', null,
-        React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' } }, 'Secondary (Dark)'),
-        React.createElement('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap' } },
-          React.createElement(Button, { variant: 'secondary', size: 'medium', isDarkMode: true }, 'Enabled'),
-          React.createElement(Button, { variant: 'secondary', size: 'medium', isDarkMode: true, disabled: true }, 'Disabled'),
-        ),
-      ),
-    );
-  },
+  render: () => React.createElement('div', { style: { padding: '40px', fontFamily: FONT, backgroundColor: '#1a1a1a', borderRadius: '8px' } },
+    React.createElement('h2', { style: { margin: '0 0 24px 0', fontSize: '24px', fontWeight: 'bold', color: '#fff' } }, 'Button — Dark mode'),
+    React.createElement(Matrix, { isDarkMode: true })
+  ),
+  parameters: { backgrounds: { default: 'dark' } },
 };
 
 export const Behavior = {
-  render: () => {
-    return React.createElement('div', {
-      style: {
-        padding: '40px',
-        fontFamily: 'system-ui',
-        maxWidth: '800px',
-      },
-    },
-      React.createElement('h2', null, '📋 Comportamiento de los Botones'),
-      React.createElement('h3', { style: { marginTop: '32px' } }, '1. Estado Habilitado (Defecto)'),
-      React.createElement('ul', null,
-        React.createElement('li', null, 'Los CTA siempre están en estado habilitado por defecto'),
-        React.createElement('li', null, 'Excepto en casos puntuales: restricciones por rol o acciones ya realizadas'),
-      ),
-      React.createElement('h3', { style: { marginTop: '32px' } }, '2. Comportamiento en Formularios'),
-      React.createElement('ul', null,
-        React.createElement('li', null, 'Si faltan campos obligatorios o hay errores, estos se marcarán'),
-        React.createElement('li', null, 'El CTA NO se deshabilitará para permitir reintentos'),
-        React.createElement('li', null, 'Esto guía al usuario sin bloquear la acción'),
-      ),
-      React.createElement('h3', { style: { marginTop: '32px' } }, '3. Uso del Estado Deshabilitado'),
-      React.createElement('ul', null,
-        React.createElement('li', null, 'Restricciones por rol: usuario no tiene permisos'),
-        React.createElement('li', null, 'Acción no repetible: ya fue realizada'),
-        React.createElement('li', null, 'Debe ser visualmente distinto y no responder a interacciones'),
-      ),
-    );
-  },
+  render: () => React.createElement('div', { style: { padding: '40px', fontFamily: FONT, maxWidth: '760px' } },
+    React.createElement('h2', null, 'Comportamiento de los botones'),
+    React.createElement('p', { style: { color: '#0F62FE', fontWeight: 700 } }, 'Los CTA estarán siempre en estado habilitado por defecto, salvo en casos puntuales (roles o acciones ya realizadas).'),
+    React.createElement('h3', { style: { marginTop: '24px' } }, 'En formularios'),
+    React.createElement('ul', null,
+      React.createElement('li', null, 'Si faltan campos obligatorios o hay errores, estos se marcarán para guiar al usuario.'),
+      React.createElement('li', null, 'No se deshabilitará el CTA, para permitir reintentar sin buscar cómo reactivarlo.')),
+    React.createElement('h3', { style: { marginTop: '24px' } }, 'Uso del estado deshabilitado'),
+    React.createElement('ul', null,
+      React.createElement('li', null, 'Restricciones por rol: el usuario no tiene permiso para ejecutar la acción.'),
+      React.createElement('li', null, 'Acción no repetible: ya fue realizada y no es posible volver a ejecutarla.'),
+      React.createElement('li', null, 'Debe ser visualmente distinto y no responder a interacciones.'))
+  ),
 };
