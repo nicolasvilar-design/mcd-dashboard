@@ -21,15 +21,14 @@ export const TypographyScale = () => {
     { level: 'Headline 05', size: '24px', weight: 700, lineHeight: '32px', spacing: '-0.84%', family: 'Speedee', usage: 'Card titles, component headers' },
     { level: 'Headline 06', size: '20px', weight: 700, lineHeight: '28px', spacing: '-1.05%', family: 'Speedee', usage: 'Small section titles' },
 
-    // Body
-    { level: 'Body 01', size: '18px', weight: 400, lineHeight: '28px', spacing: '-0.22%', family: 'Segoe UI', usage: 'Long-form body text' },
-    { level: 'Body 02', size: '16px', weight: 400, lineHeight: '24px', spacing: '-0.31%', family: 'Segoe UI', usage: 'Regular body text, descriptions' },
-    { level: 'Body 03', size: '14px', weight: 400, lineHeight: '20px', spacing: '-0.42%', family: 'Segoe UI', usage: 'Small body text, secondary info' },
-    { level: 'Body 04', size: '12px', weight: 400, lineHeight: '16px', spacing: '-1.25%', family: 'Segoe UI', usage: 'Captions, small text, metadata' },
+    // Body (Speedee Regular — exact from Figma tokens, letterSpacing -0.15px)
+    { level: 'Body 01', size: '16px', weight: 400, lineHeight: '24px', spacing: '-0.15px', family: 'Speedee', usage: 'Regular body text, descriptions (Body01 - cms)' },
+    { level: 'Body 02', size: '14px', weight: 400, lineHeight: '20px', spacing: '-0.15px', family: 'Speedee', usage: 'Small body text, secondary info' },
+    { level: 'Body 03 (Mono)', size: '12px', weight: 400, lineHeight: '16px', spacing: '-0.15px', family: 'Roboto Mono', usage: 'Code, hex values, monospace (RM_Body3 - cms)' },
 
-    // Labels
-    { level: 'Label 01', size: '14px', weight: 600, lineHeight: '20px', spacing: '-0.42%', family: 'Segoe UI', usage: 'Form labels, button text' },
-    { level: 'Label 02', size: '12px', weight: 600, lineHeight: '16px', spacing: '-1.25%', family: 'Segoe UI', usage: 'Small labels, tags, badges' },
+    // Labels (Speedee Regular)
+    { level: 'Label 01', size: '12px', weight: 400, lineHeight: '16px', spacing: '-0.15px', family: 'Speedee', usage: 'Form labels, small UI text (Label01 - cms)' },
+    { level: 'Label 02', size: '14px', weight: 400, lineHeight: '16px', spacing: '-0.15px', family: 'Speedee', usage: 'Input labels, button text (Label02 - cms)' },
   ];
 
   return React.createElement(
@@ -39,7 +38,7 @@ export const TypographyScale = () => {
     React.createElement(
       'p',
       { style: { margin: '0 0 48px 0', fontSize: '16px', color: '#757575', maxWidth: '900px' } },
-      'McDonald\'s Dashboard utiliza dos familias tipográficas principales: Speedee (Speedee-Bold en headings) para títulos y jerarquía, y Segoe UI para contenido de cuerpo. El sistema incluye escales Display, Headline, Body y Label para crear una jerarquía visual clara.'
+      'McDonald\'s Dashboard utiliza Speedee como familia tipográfica principal en TODO el sistema: Speedee Bold para títulos/jerarquía (Display, Headlines) y Speedee Regular para cuerpo y labels (Body, Label). Roboto Mono se usa puntualmente para valores monoespaciados (hex, código). Todos los estilos usan letter-spacing -0.15px según los tokens de Figma.'
     ),
 
     // Font Families
@@ -50,16 +49,16 @@ export const TypographyScale = () => {
       React.createElement(
         'div',
         { style: { padding: '32px', backgroundColor: '#F5F5F5', borderRadius: '8px', border: '1px solid #E8E8E8' } },
-        React.createElement('h3', { style: { margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' } }, 'Speedee (Headings)'),
+        React.createElement('h3', { style: { margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' } }, 'Speedee (Headings + Body)'),
         React.createElement('p', { style: { margin: '0 0 12px 0', fontSize: '14px', fontFamily: '"Speedee", sans-serif', color: '#292929', fontWeight: 'bold' } }, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'),
-        React.createElement('p', { style: { margin: '0', fontSize: '13px', color: '#757575' } }, 'Bold weight (700) for all headlines. Creates strong visual hierarchy and emphasis.')
+        React.createElement('p', { style: { margin: '0', fontSize: '13px', color: '#757575' } }, 'Bold (700) para headlines, Regular (400) para body y labels. Familia única del sistema, letter-spacing -0.15px.')
       ),
       React.createElement(
         'div',
         { style: { padding: '32px', backgroundColor: '#F5F5F5', borderRadius: '8px', border: '1px solid #E8E8E8' } },
-        React.createElement('h3', { style: { margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' } }, 'Segoe UI (Body)'),
-        React.createElement('p', { style: { margin: '0 0 12px 0', fontSize: '14px', fontFamily: '"Segoe UI", sans-serif', color: '#292929' } }, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'),
-        React.createElement('p', { style: { margin: '0', fontSize: '13px', color: '#757575' } }, 'Regular weight (400) for body, semi-bold (600) for labels. Optimized for readability.')
+        React.createElement('h3', { style: { margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' } }, 'Roboto Mono (Monospace)'),
+        React.createElement('p', { style: { margin: '0 0 12px 0', fontSize: '14px', fontFamily: '"Roboto Mono", monospace', color: '#292929' } }, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'),
+        React.createElement('p', { style: { margin: '0', fontSize: '13px', color: '#757575' } }, 'Regular (400) para valores monoespaciados: códigos hex, datos técnicos (RM_Body3).')
       )
     ),
 
@@ -118,10 +117,10 @@ export const TypographyScale = () => {
       React.createElement(
         'div',
         null,
-        React.createElement('h3', { style: { margin: '0 0 16px 0', fontSize: '16px', fontWeight: '600' } }, 'Segoe UI Body & Labels'),
-        React.createElement('div', { style: { fontSize: '18px', fontFamily: '"Segoe UI", sans-serif', fontWeight: 400, lineHeight: 1.5, margin: '16px 0', maxWidth: '600px' } }, 'This is Body 01 text. It\'s used for long-form content and main body text throughout the dashboard. It provides excellent readability on all screen sizes.'),
-        React.createElement('div', { style: { fontSize: '14px', fontFamily: '"Segoe UI", sans-serif', fontWeight: 600, lineHeight: 1.4, margin: '16px 0' } }, 'Label 01 - Form Labels & Buttons'),
-        React.createElement('div', { style: { fontSize: '12px', fontFamily: '"Segoe UI", sans-serif', fontWeight: 600, lineHeight: 1.3, margin: '16px 0', color: '#757575' } }, 'Label 02 - Small labels, tags, and captions'),
+        React.createElement('h3', { style: { margin: '0 0 16px 0', fontSize: '16px', fontWeight: '600' } }, 'Speedee Body & Labels'),
+        React.createElement('div', { style: { fontSize: '16px', fontFamily: '"Speedee", sans-serif', fontWeight: 400, lineHeight: '24px', letterSpacing: '-0.15px', margin: '16px 0', maxWidth: '600px' } }, 'This is Body 01 text (Speedee Regular 16/24). It\'s used for body content and descriptions throughout the dashboard.'),
+        React.createElement('div', { style: { fontSize: '14px', fontFamily: '"Speedee", sans-serif', fontWeight: 400, lineHeight: '16px', letterSpacing: '-0.15px', margin: '16px 0' } }, 'Label 02 - Input labels & button text (Speedee Regular 14/16)'),
+        React.createElement('div', { style: { fontSize: '12px', fontFamily: '"Speedee", sans-serif', fontWeight: 400, lineHeight: '16px', letterSpacing: '-0.15px', margin: '16px 0', color: '#757575' } }, 'Label 01 - Small labels & supporting text (Speedee Regular 12/16)'),
       )
     ),
 
