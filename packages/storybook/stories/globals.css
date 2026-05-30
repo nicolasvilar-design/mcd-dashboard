@@ -7,21 +7,37 @@
   font-family: 'Speedee';
   src: local('Speedee'), local('Speedee-Regular');
   font-weight: 400;
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'Speedee';
   src: local('Speedee-Bold');
-  font-weight: 600;
+  font-weight: 700;
+  font-display: swap;
 }
 
-/* Base styles */
+/* Base styles — Speedee is the system typeface (per Figma tokens) */
 body {
-  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Speedee', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: #292929;
   background-color: #ffffff;
+  letter-spacing: -0.15px;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Speedee', sans-serif;
+  font-family: 'Speedee', system-ui, sans-serif;
+}
+
+code, pre {
+  font-family: 'Roboto Mono', ui-monospace, monospace;
+}
+
+/* Respect reduced motion globally */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
